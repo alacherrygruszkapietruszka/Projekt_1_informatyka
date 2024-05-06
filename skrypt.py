@@ -30,23 +30,45 @@ class Transformacje:
         self.ecc2 = (2 * self.flat - self.flat ** 2) # eccentricity**2
         
 
-        def xyz2flh(self, X, Y, Z):
-            # XYZ ---> flh - ALGORYTM HIRVONENA
+        def xyz2flh(self, X, Y, Z, output = 'dec_degree'):
             """
-            Następujący algorytm przelicza współrzędne z układu ortokartezjańskiego na współrzędne geodezyjne.
+            Algorytm Hirvonena - algorytm transformacji współrzędnych ortokartezjańskich (x, y, z)
+            na współrzędne geodezyjne długość szerokość i wysokośc elipsoidalna (phi, lam, h). Jest to proces iteracyjny. 
+            W wyniku 3-4-krotneej iteracji wyznaczenia wsp. phi można przeliczyć współrzędne z dokładnoscią ok 1 cm.     
+            Parameters
+            ----------
+            X, Y, Z : FLOAT
+                 współrzędne w układzie orto-kartezjańskim, 
+
+            Returns
+            -------
+            lat
+                [stopnie dziesiętne] - szerokość geodezyjna
+            lon
+                [stopnie dziesiętne] - długośc geodezyjna.
+            h : TYPE
+                [metry] - wysokość elipsoidalna
+            output [STR] - optional, defoulf 
+                dec_degree - decimal degree
+                dms - degree, minutes, sec
             """
-            flh = []
-            for X,Y,Z in zip(X,Y,Z):
-                p = np.sqrt(X**2 + Y**2)
-                fi = np.arctan(Z / (p * (1 - self.e2)))
-                while True:
-                    N = self.Npu(fi)
-                    h = p / np.cos(fi) - N
-                    fip = fi     #fip - fi poprzednie, fi - fi nowe
-                    fi = np.arctan(Z / (p * (1 - N * self.e2 / (N + h))))
-                    if abs(fip - fi) < (0.000001/206265):
-                        break
+            r   = sqrt(X**2 + Y**2)           # promień
+            lat_prev = atan(Z / (r * (1 - self.ecc2)))    # pierwsze przybliilizenie
+            lat = 0
+            while abs(lat_prev - lat) > 0.000001/206265:    
+                lat_prev = lat
+                N = self.a / sqrt(1 - self.ecc2 * sin(lat_prev)**2)
+                h = r / cos(lat_prev) - N
+                lat = atan((Z/r) * (((1 - self.ecc2 * N/(N + h))**(-1))))
+            lon = atan(Y/X)
+            N = self.a / sqrt(1 - self.ecc2 * (sin(lat))**2);
+            h = r / cos(lat) - N       
+            if output == "dec_degree":
+                return degrees(lat), degrees(lon), h 
+            elif output == "dms":
+                lat = self.deg2dms(degrees(lat))
+                lon = self.deg2dms(degrees(lon))
+                return f"{lat[0]:02d}:{lat[1]:02d}:{lat[2]:.2f}", f"{lon[0]:02d}:{lon[1]:02d}:{lon[2]:.2f}", f"{h:.3f}"
+            else:
+                raise NotImplementedError(f"{output} - output format not defined")
             
-                lam = np.arctan2(Y, X)
-                flh.extend([np.rad2deg(fi), np.rad2deg(lam), h])
-            return(flh)
