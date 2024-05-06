@@ -1,4 +1,5 @@
 from math import sin, cos, sqrt, atan, atan2, degrees, radians
+import numpy as np
 o = object()
 
 class Transformacje:
@@ -28,3 +29,19 @@ class Transformacje:
         self.ecc = sqrt(2 * self.flat - self.flat ** 2) # eccentricity  WGS84:0.0818191910428 
         self.ecc2 = (2 * self.flat - self.flat ** 2) # eccentricity**2
         
+        def xyz2flh(self, X, Y, Z):
+            flh = []
+            for X,Y,Z in zip(X,Y,Z):
+                p = np.sqrt(X**2 + Y**2)
+                fi = np.arctan(Z / (p * (1 - self.e2)))
+                while True:
+                    N = self.Npu(fi)
+                    h = p / np.cos(fi) - N
+                    fip = fi     #fip - fi poprzednie, fi - fi nowe
+                    fi = np.arctan(Z / (p * (1 - N * self.e2 / (N + h))))
+                    if abs(fip - fi) < (0.000001/206265):
+                        break
+            
+                lam = np.arctan2(Y, X)
+                flh.extend([np.rad2deg(fi), np.rad2deg(lam), h])
+            return(flh)
