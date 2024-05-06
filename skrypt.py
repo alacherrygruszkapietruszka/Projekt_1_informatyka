@@ -29,7 +29,12 @@ class Transformacje:
         self.ecc = sqrt(2 * self.flat - self.flat ** 2) # eccentricity  WGS84:0.0818191910428 
         self.ecc2 = (2 * self.flat - self.flat ** 2) # eccentricity**2
         
+
         def xyz2flh(self, X, Y, Z):
+            # XYZ ---> flh - ALGORYTM HIRVONENA
+            """
+            Następujący algorytm przelicza współrzędne z układu ortokartezjańskiego na współrzędne geodezyjne.
+            """
             flh = []
             for X,Y,Z in zip(X,Y,Z):
                 p = np.sqrt(X**2 + Y**2)
