@@ -28,7 +28,19 @@ class Transformacje:
         self.flat = (self.a - self.b) / self.a
         self.ecc = sqrt(2 * self.flat - self.flat ** 2) # eccentricity  WGS84:0.0818191910428 
         self.ecc2 = (2 * self.flat - self.flat ** 2) # eccentricity**2
-        
+
+        def Npu(self, fi):     #promien krzywizny w I wertykale
+            N = self.a / np.sqrt(1 - self.e2 * np.sin(fi)**2)
+            return(N)
+
+        def Sigma(self, fi):
+            A0 = 1 - (self.e2/4) - (3*(self.e2)**2)/64 -  (5*(self.e2)**3)/256
+            A2 = 3/8 * (self.e2 + (self.e2)**2/4 + 15*(self.e2)**3/128)
+            A4 = 15/256 * ( (self.e2)**2 + (3*((self.e2)**3))/4 )
+            A6 = 35 * (self.e2)**3 / 3072
+            sigma = self.a * ( A0 * fi - A2 * np.sin(2*fi) + A4 * np.sin(4*fi) - A6 * np.sin(6*fi) )
+               
+            return(sigma)        
 
         def xyz2flh(self, X, Y, Z):
             # XYZ ---> flh - ALGORYTM HIRVONENA
