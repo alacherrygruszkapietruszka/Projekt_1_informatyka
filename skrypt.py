@@ -119,6 +119,62 @@ class Transformacje:
                 print(phi, lam, h)
                 # phi, lam, h = geo.xyz2plh2(X, Y, Z)
                 # print(phi, lam, h)
-
-
             
+            def GK2000(self, f, l, m=0.999923):
+               result = []
+               for f, l in zip(f,l):
+                   l0 = 0 
+                   strefa = 0
+                   if l >=np.deg2rad(13.5) and l <= np.deg2rad(16.5):
+                       strefa = 5
+                       la0 = np.deg2rad(15)
+                   elif l >np.deg2rad(16.5) and l <= np.deg2rad(19.5):
+                       strefa = 6
+                       l0 = np.deg2rad(18)
+                   elif l >np.deg2rad(19.5) and l <= np.deg2rad(22.5):
+                       strefa =7
+                       l0 = np.deg2rad(21)
+                   elif l >np.deg2rad(22.5) and l <= np.deg2rad(25.5):
+                       strefa = 8
+                       l0 = np.deg2rad(24)
+                   b2 = (self.a**2) * (1-self.ep2)   #krotsza polos
+                   e2p = ( self.a**2 - b2 ) / b2   #drugi mimosrod elipsy
+                   dl = l - l0
+                   t = np.tan(f)
+                   ni = np.sqrt(e2p * (np.cos(f))**2)
+                   N = self.Np(f)
+                   sigma = self.sigma(f)
+                   XGK20 = sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1 + ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
+                   YGK20 = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
+                   X2000 = XGK20 * m 
+                   Y2000 = YGK20 * m + strefa*1000000 + 500000
+                   result.append([X2000, Y2000])
+               
+                   return result
+
+   
+               def GK1992(self, f, l, m = 0.9993):
+                   result = []
+                   lam0 = (19*np.pi)/180
+                   for f, l in zip(f,l):
+                       b2 = (self.a**2) * (1-self.ep2)   #krotsza polos
+                       e2p = ( self.a**2 - b2 ) / b2   #drugi mimosrod elipsy
+                       dlam = l - lam0
+                       t = np.tan(f)
+                       ni = np.sqrt(e2p * (np.cos(f))**2)
+                       N = self.Np(f)
+            
+                       sigma = self.sigma(f)
+            
+                       xgk = sigma + ((dlam**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dlam**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dlam**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
+                       ygk = (dlam*N* np.cos(f)) * (1+(((dlam)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dlam**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
+                       
+                       x92 = xgk*m - 5300000
+                       y92 = ygk*m + 500000
+                       
+                       result.append([x92, y92])
+                   
+                   return result 
+        
+        
+                    
