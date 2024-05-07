@@ -85,6 +85,24 @@ class Transformacje:
                 
 
             def plh2xyz(self, phi, lam, h):
+                """
+                Algorytm zamiany współrzędnych geodezyjnych: długość, szerokość i wysokośc elipsoidalna (phi, lam, h) na 
+                współrzędne ortokartezjańskie (x, y, z).
+                Parameters
+                ----------
+                phi
+                    [stopnie dziesiętne] - szerokość geodezyjna
+                lam
+                    [stopnie dziesiętne] - długośc geodezyjna.
+                h : TYPE
+                    [metry] - wysokość elipsoidalna
+
+                Returns
+                -------
+                X, Y, Z : FLOAT
+                     [metry] - współrzędne w układzie orto-kartezjańskim, 
+                
+                """
                 phi = radians(phi)
                 lam = radians(lam)
                 Rn = self.a/sqrt(1 - self.ecc2 * sin(phi)**2)
@@ -96,7 +114,23 @@ class Transformacje:
             
             
             def xyz2neu(self, x, y, z, x_0, y_0, z_0):
-    
+                """
+                Algorytm przeniesiena współrzędnych ortokaretzjanskich (x, y, z) na współrzędne w układzie
+                horyzontalnum neu.
+
+                Parameters
+                ----------
+                x, y, z : FLOAT
+                    [metry] - współrzędne w układzie orto-kartezjańskim
+                x_0, y_0, z_0 : FLOAT
+                    [metry] - współrzędne w układzie orto-kartezjańskim
+                    
+                Returns
+                -------
+                N, E, U : FLOAT
+                    [metry] - współrzędne w układzie horyzontalnym
+
+                """
                 phi, lam, _ = [radians(coord) for coord in self.xyz2plh(x_0, y_0, z_0)]
                 
                 R = np.array([[-sin(lam), -sin(phi)*cos(lam), cos(phi)*cos(lam)],
@@ -106,23 +140,33 @@ class Transformacje:
                 xyz_t = np.array([[x - x_0],
                                   [y - y_0],
                                   [z - z_0]])
-                enu = R.T @ xyz_t
+                [[E], [N], [U]] = R.T @ xyz_t
                 
-                return enu
+                return N, E, U
 
-            if __name__ == "__main__":
-                # utworzenie obiektu
-                geo = Transformacje(model = "wgs84")
-                # dane XYZ geocentryczne
-                X = 3664940.500; Y = 1409153.590; Z = 5009571.170
-                phi, lam, h = geo.xyz2plh(X, Y, Z)
-                print(phi, lam, h)
-                # phi, lam, h = geo.xyz2plh2(X, Y, Z)
-                # print(phi, lam, h)
+           
             
-            def GK2000(self, f, l, m=0.999923):
-               result = []
-               for f, l in zip(f,l):
+            def PL2000(self, f, l, m=0.999923):
+                """
+                Algorytm zamiany współrzędnych geodezyjnych na wspórzędne w układzie współrzędnych
+                PL-2000.
+
+                Parameters
+                ----------
+                f : FLOAT
+                    [stopnie dziesiętne] - szerokosć geodezyjna
+                l : FLOAT
+                    [stopnie dziesiętne] - długosć geodezyjna
+                m: FLOAT
+                    stała - skala odwzorowania na południkach osiowych dla układu PL-2000
+                Returns
+                -------
+                result : LIST
+                    lista zawierająca kolejne współrzędne x, y w układzie PL-2000
+
+                """
+                result = []
+                for f, l in zip(f,l):
                    l0 = 0 
                    strefa = 0
                    if l >=np.deg2rad(13.5) and l <= np.deg2rad(16.5):
@@ -152,29 +196,54 @@ class Transformacje:
                
                    return result
 
-   
-               def GK1992(self, f, l, m = 0.9993):
-                   result = []
-                   lam0 = (19*np.pi)/180
-                   for f, l in zip(f,l):
-                       b2 = (self.a**2) * (1-self.ep2)   #krotsza polos
-                       e2p = ( self.a**2 - b2 ) / b2   #drugi mimosrod elipsy
-                       dlam = l - lam0
-                       t = np.tan(f)
-                       ni = np.sqrt(e2p * (np.cos(f))**2)
-                       N = self.Np(f)
+            def PL1992(self, f, l, m = 0.9993):
+                """
+                Algorytm zamiany współrzędnych geodezyjnych na wspórzędne w układzie współrzędnych
+                PL-1992.
+
+                Parameters
+                ----------
+                f : FLOAT
+                    [stopnie dziesiętne] - szerokosć geodezyjna
+                l : FLOAT
+                    [stopnie dziesiętne] - długosć geodezyjna
+                m: FLOAT
+                    stała - skala odwzorowania na południkach osiowych dla układu PL-1992
+                Returns
+                -------
+                result : LIST
+                    lista zawierająca kolejne współrzędne x, y w układzie PL-1992
+
+                """
+                result = []
+                lam0 = (19*np.pi)/180
+                for f, l in zip(f,l):
+                    b2 = (self.a**2) * (1-self.ep2)   #krotsza polos
+                    e2p = ( self.a**2 - b2 ) / b2   #drugi mimosrod elipsy
+                    dlam = l - lam0
+                    t = np.tan(f)
+                    ni = np.sqrt(e2p * (np.cos(f))**2)
+                    N = self.Np(f)
             
-                       sigma = self.sigma(f)
+                    sigma = self.sigma(f)
             
-                       xgk = sigma + ((dlam**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dlam**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dlam**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
-                       ygk = (dlam*N* np.cos(f)) * (1+(((dlam)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dlam**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
+                    xgk = sigma + ((dlam**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dlam**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(ni**2) + 4*(ni**4)     )  + ((dlam**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(ni**2) - 330*(ni**2)*(t**2))  )
+                    ygk = (dlam*N* np.cos(f)) * (1+(((dlam)**2/6)*(np.cos(f))**2) *(1-(t**2)+(ni**2))+((dlam**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(ni**2)-58*(ni**2)*(t**2)) )
+                    
+                    x92 = xgk*m - 5300000
+                    y92 = ygk*m + 500000
                        
-                       x92 = xgk*m - 5300000
-                       y92 = ygk*m + 500000
-                       
-                       result.append([x92, y92])
+                    result.append([x92, y92])
                    
-                   return result 
+                    return result 
         
-        
+        if __name__ == "__main__":
+            # utworzenie obiektu
+            geo = Transformacje(model = "wgs84")
+            # dane XYZ geocentryczne
+            X = 3664940.500; Y = 1409153.590; Z = 5009571.170
+            phi, lam, h = geo.xyz2plh(X, Y, Z)
+            print(phi, lam, h)
+            # phi, lam, h = geo.xyz2plh2(X, Y, Z)
+            # print(phi, lam, h)
                     
