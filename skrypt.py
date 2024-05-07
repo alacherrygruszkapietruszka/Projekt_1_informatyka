@@ -33,7 +33,7 @@ class Transformacje:
             N = self.a / np.sqrt(1 - self.e2 * np.sin(fi)**2)
             return(N)
 
-        def Sigma(self, fi):
+        def sigma(self, fi):
             A0 = 1 - (self.e2/4) - (3*(self.e2)**2)/64 -  (5*(self.e2)**3)/256
             A2 = 3/8 * (self.e2 + (self.e2)**2/4 + 15*(self.e2)**3/128)
             A4 = 15/256 * ( (self.e2)**2 + (3*((self.e2)**3))/4 )
