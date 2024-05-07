@@ -39,7 +39,6 @@ class Transformacje:
             A4 = 15/256 * ( (self.e2)**2 + (3*((self.e2)**3))/4 )
             A6 = 35 * (self.e2)**3 / 3072
             sigma = self.a * ( A0 * fi - A2 * np.sin(2*fi) + A4 * np.sin(4*fi) - A6 * np.sin(6*fi) )
-               
             return(sigma)        
 
         def xyz2flh(self, X, Y, Z, output = 'dec_degree'):
