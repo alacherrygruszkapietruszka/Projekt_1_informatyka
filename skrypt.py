@@ -95,22 +95,30 @@ class Transformacje:
                 return x, y, z
             
             
-<<<<<<< HEAD
-            
-            
+            def xyz2neu(self, x, y, z, x_0, y_0, z_0):
+    
+                phi, lam, _ = [radians(coord) for coord in self.xyz2plh(x_0, y_0, z_0)]
+                
+                R = np.array([[-sin(lam), -sin(phi)*cos(lam), cos(phi)*cos(lam)],
+                              [ cos(lam), -sin(phi)*sin(lam), cos(phi)*sin(lam)],
+                              [        0,           cos(phi),          sin(phi)]])
+                
+                xyz_t = np.array([[x - x_0],
+                                  [y - y_0],
+                                  [z - z_0]])
+                enu = R.T @ xyz_t
+                
+                return enu
 
-=======
-=======
-         def plh2xyz(self, phi, lam, h):
-             phi = radians(phi)
-             lam = radians(lam)
-             Rn = self.a/sqrt(1 - self.ecc2 * sin(phi)**2)
-             q = Rn * self.ecc2 * sin(phi)
-             x = (Rn + h) * cos(phi) * cos(lam)
-             y = (Rn + h) * cos(phi) * sin(lam)
-             z = (Rn + h) * sin(phi) - q 
-             return x, y, z
->>>>>>> 9382ecc3ffb52202f53888000d813f36e72da539
->>>>>>> 83ea463090f912c11f1a4cd4641117389318eccb
+            if __name__ == "__main__":
+                # utworzenie obiektu
+                geo = Transformacje(model = "wgs84")
+                # dane XYZ geocentryczne
+                X = 3664940.500; Y = 1409153.590; Z = 5009571.170
+                phi, lam, h = geo.xyz2plh(X, Y, Z)
+                print(phi, lam, h)
+                # phi, lam, h = geo.xyz2plh2(X, Y, Z)
+                # print(phi, lam, h)
+
 
             
