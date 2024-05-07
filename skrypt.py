@@ -83,6 +83,7 @@ class Transformacje:
             else:
                 raise NotImplementedError(f"{output} - output format not defined")
                 
+<<<<<<< HEAD
             def plh2xyz(self, phi, lam, h):
                 phi = radians(phi)
                 lam = radians(lam)
@@ -92,5 +93,8 @@ class Transformacje:
                 y = (Rn + h) * cos(phi) * sin(lam)
                 z = (Rn + h) * sin(phi) - q 
                 return x, y, z
+=======
+        
+>>>>>>> 9382ecc3ffb52202f53888000d813f36e72da539
 
             
