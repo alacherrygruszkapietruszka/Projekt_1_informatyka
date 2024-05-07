@@ -83,4 +83,11 @@ class Transformacje:
                 return f"{lat[0]:02d}:{lat[1]:02d}:{lat[2]:.2f}", f"{lon[0]:02d}:{lon[1]:02d}:{lon[2]:.2f}", f"{h:.3f}"
             else:
                 raise NotImplementedError(f"{output} - output format not defined")
+                
+        def plh2xyz(self, phi, lam, h):
+            phi = radians(phi)
+            lam = radians(lam)
+            Rn = self.a/sqrt(1 - self.ecc2 * sin(phi)**2)
+            q = Rn * self.ecc2 * sin(phi)
+            
             
