@@ -245,16 +245,16 @@ class Transformacje:
                     result  = self.xyz2plh(dane[:,0], dane[:,1], dane[:,2])
                     np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.10f %0.10f %0.3f')
                 elif transf == 'FLH2XYZ':
-                    result  = self.FLH2XYZ(np.deg2rad((dane[:,0])), np.deg2rad(dane[:,1]), dane[:,2])
+                    result  = self.plh2xyz(np.deg2rad((dane[:,0])), np.deg2rad(dane[:,1]), dane[:,2])
                     np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
                 elif transf == 'XYZ2NEU':
-                    result  = self.XYZ2NEU(dane[1:,0], dane[1:,1], dane[1:,2], dane[0,0], dane[0,1], dane[0,2])
+                    result  = self.xyz2neu(dane[1:,0], dane[1:,1], dane[1:,2], dane[0,0], dane[0,1], dane[0,2])
                     np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter =' ', fmt ='%0.3f %0.3f %0.3f' )
                 elif transf == 'GK2000':
-                    result  = self.GK2000(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
+                    result  = self.PL2000(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
                     np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.3f %0.3f')
                 elif transf == 'GK1992':
-                    result  = self.GK1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
+                    result  = self.PL1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
                     np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.3f %0.3f')
                 
         if __name__ == "__main__":
