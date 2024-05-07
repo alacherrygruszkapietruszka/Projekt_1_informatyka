@@ -94,7 +94,15 @@ class Transformacje:
                 z = (Rn + h) * sin(phi) - q 
                 return x, y, z
 =======
-        
+         def plh2xyz(self, phi, lam, h):
+             phi = radians(phi)
+             lam = radians(lam)
+             Rn = self.a/sqrt(1 - self.ecc2 * sin(phi)**2)
+             q = Rn * self.ecc2 * sin(phi)
+             x = (Rn + h) * cos(phi) * cos(lam)
+             y = (Rn + h) * cos(phi) * sin(lam)
+             z = (Rn + h) * sin(phi) - q 
+             return x, y, z
 >>>>>>> 9382ecc3ffb52202f53888000d813f36e72da539
 
             
