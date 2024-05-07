@@ -1,6 +1,6 @@
 from math import sin, cos, sqrt, atan, atan2, degrees, radians
 import numpy as np
-import argparse as args
+import argparse as args, argparse
 
 o = object()
 
@@ -257,13 +257,31 @@ class Transformacje:
                     result  = self.PL1992(np.deg2rad(dane[:,0]), np.deg2rad(dane[:,1]))
                     np.savetxt(f"result_{transf}_{args.elip}.txt", result, delimiter=' ', fmt='%0.3f %0.3f')
                 
-        if __name__ == "__main__":
-            # utworzenie obiektu
-            geo = Transformacje(model = "wgs84")
-            # dane XYZ geocentryczne
-            X = 3664940.500; Y = 1409153.590; Z = 5009571.170
-            phi, lam, h = geo.xyz2plh(X, Y, Z)
-            print(phi, lam, h)
-            # phi, lam, h = geo.xyz2plh2(X, Y, Z)
-            # print(phi, lam, h)
-                    
+    if __name__ == "__main__":
+        try:
+            parser = argparse.ArgumentParser(description="Podaj plik")
+            parser.add_argument("-plik", type = str, help = "Podaj nazwę pliku, w którym znajdują się dane wejsciowe (ps. oprócz nazwy podaj rozszerzenie:)")
+            parser.add_argument("-elip", type = str, help = "Wybierz elipsoidę, na której ma wykonać się transformacja, wpisz jedną: 'WGS84', 'GRS80', 'Elipsoida Krasowskiego' ")
+            parser.add_argument("-funkcja", type = str, help = "Wybierz transformację jaką chcesz obliczyć: 'XYZ_BLH', 'BLH_XYZ', 'XYZ_NEU' ")
+            args = parser.parse_args()
+        except SyntaxError:
+            print(f"Niestety nie ma takiego pliku. Spróbuj podać pełną scieżkę do pliku lub upewnij się że wpisujesz dobrą nazwę")
+                       
+        
+        elip = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'Elipsoida Krasowskiego':[6378245.000, 0.00669342162296]}
+        funkcja = {'XYZ_BLH' : 'hirvonen', 'BLH_XYZ' : 'filh2XYZ', 'XYZ_NEU' : 'xyz2neup', 'BL_PL1992' : 'cale92', 'BL_PL2000' : 'cale00'}
+            
+        try:
+            geo = Transformacje(elip[args.elip.upper()])
+            finito = geo.plik(args.plik, args.funkcja.upper())
+            print("Zapisano")
+        except KeyError():
+            print(f"Podana funkcja/elipsoida nie istnieją, proszę upewnij się, że korzystasz z istniejących elipsoid")
+        except AttributeError:
+            print("Podana funkcja/elipsoida nie istnieje, proszę wprowadzić dostępne wartosci.")
+        except FileNotFoundError:
+            print("Nie znaleziono takiego pliku. Proszę spróbować wprowadzić inny plik.")
+        except IndexError:
+            print("Nieodpowiedni format pliku. Proszę wprowadzić dane do pliku tak jak pokazano w przyładzie.")
+        except ValueError:
+            print("Nieodpowiedni format pliku. Proszę wprowadzić dane do pliku tak jak pokazano w przyładzie.")
