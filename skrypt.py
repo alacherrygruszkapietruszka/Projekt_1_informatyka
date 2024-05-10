@@ -241,7 +241,27 @@ class Transformacje:
                    
                     return result 
              
-        def file_save92(self, X, Y, Z, file_out):
+            def file_open(self, name):
+                """
+                Wczytanie pliku .txt i wyodrębnienie podanych w nim współrzędnych 
+                za pomocą pętli for. Odczytane dane dodajemy do list.
+                """
+                
+                X = []
+                Y = []
+                Z = []
+                with open(name, 'r') as plik:
+                    lines = plik.readlines()
+                    t = 0
+                    for i in lines:
+                        x = i.split(',')
+                        X.append(float(x[0]))
+                        Y.append(float(x[1]))
+                        Z.append(float(x[2]))
+                    
+                return X, Y, Z
+
+            def file_save92(self, X, Y, Z, file_out):
                 """
                 Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji XYZ -> PL-1992 
                 do pliku wyjsciowego file_out w formacie .txt
@@ -263,6 +283,106 @@ class Transformacje:
                     b = f'{b:7.3f}'
                     plik.write(f'{a},   {b} \n')
                 plik.close()
+            
+            def file_save00(self, X, Y, Z, file_out):
+                """
+                Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji XYZ -> PL-2000 
+                do pliku wyjsciowego file_out w formacie .txt
+                """
+                
+                X00 = []
+                Y00 = []
+                for a, b, c in zip(X, Y, Z):
+                    x00, y00 = Transformacje.PL2000(a, b, c)
+                    X00.append(x00)
+                    Y00.append(y00)
+                    
+                plik=open(file_out,"w")
+                plik.write(f'# PL-2000---------------------------------------------- \n')
+                plik.write(f'  X[m]         Y[m] \n')
+                plik.write(f'# ----------------------------------------------------- \n')
+                for a,b in zip(X00,Y00):
+                    a = f'{a:7.3f}'
+                    b = f'{b:7.3f}'
+                    plik.write(f'{a},   {b} \n')
+                plik.close()
+
+            
+            def file_saveFLH(self, X, Y, Z, file_out):
+                """
+                Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji XYZ -> BLH 
+                do pliku wyjsciowego file_out w formacie .txt
+                """
+                
+                F = []
+                L = []
+                H = []
+                for a, b, c in zip(X, Y, Z):
+                    f, l, h = Transformacje.xyz2flh(a, b, c)
+                    F.append(degrees(f))
+                    L.append(degrees(l))
+                    H.append(h)
+                    
+                plik=open(file_out,"w")
+                plik.write(f'  B[d]         L[d]         H[m] \n')
+                plik.write(f'# ----------------------------------------------------- \n')
+                for a,b,c in zip(F,L,H):
+                    a = f'{a:7.4f}'
+                    b = f'{b:7.4f}'
+                    c = f'{c:7.3f}'
+                    plik.write(f'{a},      {b},      {c} \n')
+                plik.close()
+                    
+            def file_saveNEU(self, X, Y, Z, xref, yref, zref, file_out):
+                """
+                Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji XYZ -> NEU 
+                do pliku wyjsciowego file_out w formacie .txt
+                """
+                
+                N = []
+                E = []
+                U = []
+                for a, b, c in zip(X, Y, Z):
+                    n, e, u = Transformacje.xyz2neu(a, b, c, xref, yref, zref)
+                    N.append(n)
+                    E.append(e)
+                    U.append(u)
+        
+                plik=open(file_out,"w")
+                plik.write(f'  N[m]         E[m]         U[m] \n')
+                plik.write(f'# ----------------------------------------------------- \n')
+        
+                for a,b,c in zip(N,E,U):
+                    a = f'{a:7.3f}'
+                    b = f'{b:7.3f}'
+                    c = f'{c:7.3f}'
+                    plik.write(f'{a},   {b},      {c} \n')
+                plik.close()
+                
+            def file_saveXYZ(self, B, L, H, file_out):
+                """
+                Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji BLH -> XYZ 
+                do pliku wyjsciowego file_out w formacie .txt
+                """
+                
+                X = []
+                Y = []
+                Z = []
+                for a, b, c in zip(B, L, H):
+                    x, y, z = Transformacje.plh2xyz(a, b, c)
+                    X.append(x)
+                    Y.append(y)
+                    Z.append(z)
+                    
+                plik=open(file_out,"w")
+                plik.write(f'  X[m]         Y[m]         Z[m] \n')
+                plik.write(f'# ----------------------------------------------------- \n')
+                for a,b,c in zip(X,Y,Z):
+                    a = f'{a:7.3f}'
+                    b = f'{b:7.3f}'
+                    c = f'{c:7.3f}'
+                    plik.write(f'{a},      {b},      {c} \n')
+                plik.close()
  
            
 if __name__ == "_main_":
@@ -270,7 +390,7 @@ if __name__ == "_main_":
     geo.wczytanie_zapisanie_pliku("wsp_inp.txt")
     
     parser = ArgumentParser()
-    parser.add_argument('-m', '--m', type=str, help="Podaj jedną z wskazanych elipsoid: GRS80, WGS84, Krasowski")
+    parser.add_argument('-m', '--m', type=str, help="Podaj jedną z wskazanych elipsoid: GRS80, WGS84, mars")
     parser.add_argument('-neu', '--neu', type=str, help="Podaj nazwe pliku wynikiowego dla neu z rozszerzeniem txt")
     parser.add_argument('-xa', '--xa', type=float)
     parser.add_argument('-ya', '--ya', type=float)
@@ -282,11 +402,11 @@ if __name__ == "_main_":
  
  
     geo = Transformacje(model = args.m)
-    f, l, h = Transformacje.hirvonen(args.xa, args.ya, args.za)
-    n, e, u = Transformacje.xyz2neu(f, l, args.xa, args.ya, args.za, args.xb, args.yb, args.zb)
+    f, l, h = geo.xyz2flh(args.xa, args.ya, args.za)
+    n, e, u = geo.xyz2neu(f, l, args.xa, args.ya, args.za, args.xb, args.yb, args.zb)
      
      
-    geo.zapis_w_kalkulatorze_neu(args.neu, n, e, u)
+    geo.file_saveNEU(args.neu, n, e, u)
      
     n = float(n)
     e = float(e)
@@ -299,7 +419,7 @@ if __name__ == "_main_":
     print("")
     print("Elipsida:", args.m)
     print(f"Wyniki_z_xyz2neu; n = {n}, e = {e}, u = {u}")
-    print("Nazwa pliku głównego:", skrypt.py.__name__)
+    print("Nazwa pliku głównego:", skrypt.__name__)
     print("")
     print("")
     print("")
