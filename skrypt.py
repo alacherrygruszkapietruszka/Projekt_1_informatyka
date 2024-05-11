@@ -366,9 +366,7 @@ if __name__ == "__main__":
  
     elip = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'mars':[3396900.000, 3376097.80585952]}
     funkcja = {'XYZ_BLH':'xyz2plh', 'BLH_XYZ': 'plh2xyz', 'XYZ_NEU': 'xyz2neu', 'BL_PL2000': 'PL2000', 'BL_PL1992': 'PL1992'}
-    geo = Transformacje(model = args.elip)
-    f, l, h = geo.xyz2flh(args.xa, args.ya, args.za)
-    n, e, u = geo.xyz2neu(f, l, args.xa, args.ya, args.za, args.xb, args.yb, args.zb)
+    
      
      
      
