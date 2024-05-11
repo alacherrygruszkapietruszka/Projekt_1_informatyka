@@ -321,10 +321,10 @@ class Transformacje:
         X = []
         Y = []
         Z = []
-        with open(name, 'r') as plik:
-            lines = plik.readlines()
-            for line in lines:
-                x = line.split(',')
+        with open(name, 'r') as file:
+            tab = np.genfromtxt(file, delimiter = "," , dtype ='<U20', skip_header = 4)
+            for line in tab:
+                x = line[0]
                 X.append(float(x[0]))
                 Y.append(float(x[1]))
                 Z.append(float(x[2]))
