@@ -36,7 +36,7 @@ class Transformacje:
     def Npu(self, fi):     #promien krzywizny w I wertykale
         N = self.a / np.sqrt(1 - self.e2 * np.sin(fi)**2)
         return(N)
-    
+
     def sigma(self, fi):
         A0 = 1 - (self.e2/4) - (3*(self.e2)**2)/64 -  (5*(self.e2)**3)/256
         A2 = 3/8 * (self.e2 + (self.e2)**2/4 + 15*(self.e2)**3/128)
@@ -54,7 +54,7 @@ class Transformacje:
         ----------
         X, Y, Z : FLOAT
              współrzędne w układzie orto-kartezjańskim, 
-    
+
         Returns
         -------
         lat
@@ -86,8 +86,8 @@ class Transformacje:
             return f"{lat[0]:02d}:{lat[1]:02d}:{lat[2]:.2f}", f"{lon[0]:02d}:{lon[1]:02d}:{lon[2]:.2f}", f"{h:.3f}"
         else:
             raise NotImplementedError(f"{output} - output format not defined")
-            
-    
+                
+
     def plh2xyz(self, phi, lam, h):
         """
         Algorytm zamiany współrzędnych geodezyjnych: długość, szerokość i wysokośc elipsoidalna (phi, lam, h) na 
@@ -116,38 +116,96 @@ class Transformacje:
         z = (Rn + h) * sin(phi) - q 
         return x, y, z
             
-            
-    def xyz2neu(self, x, y, z, x_0, y_0, z_0):
-        """
-        Algorytm przeniesiena współrzędnych ortokaretzjanskich (x, y, z) na współrzędne w układzie
-        horyzontalnum neu.
+    def get_dXYZ(self, xa, ya, za, xb, yb, zb):
+        '''
+        funkcja liczy macierz różnicy współrzednych punktów A i B, która jest potrzebna do obliczenia macierzy neu
 
-        Parameters
+        Parametry
         ----------
-        x, y, z : FLOAT
-            [metry] - współrzędne w układzie orto-kartezjańskim
-        x_0, y_0, z_0 : FLOAT
-            [metry] - współrzędne w układzie orto-kartezjańskim
-            
+        XA, YA, ZA, XB, YB, ZB: FLOAT
+             współrzędne w układzie orto-kartezjańskim, 
+
         Returns
         -------
-        N, E, U : FLOAT
-            [metry] - współrzędne w układzie horyzontalnym
+        dXYZ : ARRAY
+            macierz różnicy współrzędnych
 
-        """
-        phi, lam, _ = [radians(coord) for coord in self.xyz2flh(x_0, y_0, z_0)]
-        
-        R = np.array([[-sin(lam), -sin(phi)*cos(lam), cos(phi)*cos(lam)],
-                      [ cos(lam), -sin(phi)*sin(lam), cos(phi)*sin(lam)],
-                      [        0,           cos(phi),          sin(phi)]])
-        
-        xyz_t = np.array([[x - x_0],
-                          [y - y_0],
-                          [z - z_0]])
-        [[E], [N], [U]] = R.T @ xyz_t
-        
-        return N, E, U
+        '''
+        dXYZ = np.array([xb-xa, yb-ya, zb-za])
+        return(dXYZ)
+    
+    
+    def rneu(self, f, l):
+        '''
+        Funkcja tworzy macierz obrotu R, która jest potrzebna do obliczenia macierzy neu
 
+        Parametry
+        ----------
+        f : FLOAT
+            [stopnie dziesiętne] - szerokość geodezyjna..
+        l : FLOAT
+            [stopnie dziesiętne] - długośc geodezyjna.
+
+        Returns
+        -------
+        R ARRAY
+            macierz obrotu R
+             
+        '''
+        f=np.radians(f)
+        l=np.radians(l)
+        R = np.array([[-np.sin(f)*np.cos(l), -np.sin(l), np.cos(f)*np.cos(l)],
+                      [-np.sin(f)*np.sin(l),  np.cos(l), np.cos(f)*np.sin(l)],
+                      [np.cos(f),             0,         np.sin(f)          ]])
+        return(R)        
+    def xyz2neu(self, f, l, xa, ya, za, xb, yb, zb):
+        '''
+        Układ współrzędnych horyzontalnych – układ współrzędnych astronomicznych, w którym oś główną stanowi 
+        lokalny kierunek pionu, a płaszczyzną podstawową jest płaszczyzna horyzontu astronomicznego. 
+        Biegunami układu są zenit i nadir. Ich położenie na sferze niebieskiej zależy od współrzędnych geograficznych 
+        obserwatora oraz momentu obserwacji, tak więc współrzędne horyzontalne opisują jedynie chwilowe położenie ciała niebieskiego.
+
+        Parametry
+        ----------
+        f : FLOAT
+            [stopnie dziesiętne] - szerokość geodezyjna..
+        l : FLOAT
+            [stopnie dziesiętne] - długośc geodezyjna.
+        XA, YA, ZA, XB, YB, ZB: FLOAT
+             współrzędne w układzie orto-kartezjańskim, 
+
+        Returns
+        -------
+        n , e, u : STR
+            współrzędne horyzontalne
+            
+
+        '''
+        dX = Transformacje.get_dXYZ(self, xa, ya, za, xb, yb, zb)
+        R = Transformacje.rneu(self, f,l)
+        neu = R.T @ dX
+        n = neu[0];   e = neu[1];   u = neu[2]
+        n = "%.16f"%n; e = "%.16f"%e; u="%.16f"%u
+        dlugosc = []
+        xx = len(n); dlugosc.append(xx)
+        yy = len(e); dlugosc.append(yy)
+        zz = len(u); dlugosc.append(zz)
+        P = 50
+        
+        while xx < P:
+            n = str(" ") + n
+            xx += 1
+        
+        while yy < P:
+            e = str(" ") + e
+            yy += 1
+            
+        while zz < P:
+            u = str(" ") + u
+            zz +=1
+            
+        return(n, e, u)
+    
            
             
     def PL2000(self, f, l, m=0.999923):
@@ -240,25 +298,36 @@ class Transformacje:
             result.append([x92, y92])
            
             return result 
-             
+     
     def file_open(self, name):
         """
-        Wczytanie pliku .txt i wyodrębnienie podanych w nim współrzędnych 
+        Wczytanie pliku .txt i wyodrębnienie podanych w nim współrzędnych
         za pomocą pętli for. Odczytane dane dodajemy do list.
-        """
         
+        Parameters:
+        -----------
+        name : str
+            Nazwa pliku do odczytania.
+    
+        Returns:
+        --------
+        X : list[float]
+            Lista zawierająca współrzędne X.
+        Y : list[float]
+            Lista zawierająca współrzędne Y.
+        Z : list[float]
+            Lista zawierająca współrzędne Z.
+        """
         X = []
         Y = []
         Z = []
         with open(name, 'r') as plik:
             lines = plik.readlines()
-            t = 0
-            for i in lines:
-                x = i.split(',')
+            for line in lines:
+                x = line.split(',')
                 X.append(float(x[0]))
                 Y.append(float(x[1]))
                 Z.append(float(x[2]))
-            
         return X, Y, Z
 
     def file_save92(self, X, Y, Z, file_out):
@@ -333,61 +402,86 @@ class Transformacje:
             plik.write(f'{a},      {b},      {c} \n')
         plik.close()
             
-    def file_saveNEU(self, X, Y, Z, xref, yref, zref, file_out):
+    def file_saveNEU(self, X, Y, Z, file_out):
         """
-        Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji XYZ -> NEU 
-        do pliku wyjsciowego file_out w formacie .txt
+        Funkcja pozwala na zapisanie wyników transformacji XYZ -> NEU do pliku.
+    
+        Parameters:
+        -----------
+        X : float
+            Współrzędna X w układzie ortokartezjańskim.
+        Y : float
+            Współrzędna Y w układzie ortokartezjańskim.
+        Z : float
+            Współrzędna Z w układzie ortokartezjańskim.
+        file_out : str
+            Nazwa pliku do zapisania.
+    
+        Returns:
+        --------
+        None
         """
-        
-        N = []
-        E = []
-        U = []
-        for a, b, c in zip(X, Y, Z):
-            n, e, u = Transformacje.xyz2neu(a, b, c, xref, yref, zref)
-            N.append(n)
-            E.append(e)
-            U.append(u)
-
-        plik=open(file_out,"w")
-        plik.write(f'  N[m]         E[m]         U[m] \n')
-        plik.write(f'# ----------------------------------------------------- \n')
-
-        for a,b,c in zip(N,E,U):
-            a = f'{a:7.3f}'
-            b = f'{b:7.3f}'
-            c = f'{c:7.3f}'
-            plik.write(f'{a},   {b},      {c} \n')
-        plik.close()
-        
-    def file_saveXYZ(self, B, L, H, file_out):
-        """
-        Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji BLH -> XYZ 
-        do pliku wyjsciowego file_out w formacie .txt
-        """
-        
-        X = []
-        Y = []
-        Z = []
-        for a, b, c in zip(B, L, H):
-            x, y, z = Transformacje.plh2xyz(a, b, c)
-            X.append(x)
-            Y.append(y)
-            Z.append(z)
+        dX = self.get_dXYZ(X[0], Y[0], Z[0], X[1], Y[1], Z[1])
+        R = self.rneu(self.f, self.l)
+        neu = R.T @ dX
+        n = "%.16f" % neu[0]
+        e = "%.16f" % neu[1]
+        u = "%.16f" % neu[2]
+        dlugosc = []
+        xx = len(n)
+        dlugosc.append(xx)
+        yy = len(e)
+        dlugosc.append(yy)
+        zz = len(u)
+        dlugosc.append(zz)
+        P = 50
+    
+        while xx < P:
+            n = str(" ") + n
+            xx += 1
+    
+        while yy < P:
+            e = str(" ") + e
+            yy += 1
+    
+        while zz < P:
+            u = str(" ") + u
+            zz += 1
+    
+        with open(file_out, "w") as plik:
+            plik.write(f'  N[m]         E[m]         U[m] \n')
+            plik.write(f'# ----------------------------------------------------- \n')
+            plik.write(f'{n},   {e},      {u} \n')
             
-        plik=open(file_out,"w")
-        plik.write(f'  X[m]         Y[m]         Z[m] \n')
-        plik.write(f'# ----------------------------------------------------- \n')
-        for a,b,c in zip(X,Y,Z):
-            a = f'{a:7.3f}'
-            b = f'{b:7.3f}'
-            c = f'{c:7.3f}'
-            plik.write(f'{a},      {b},      {c} \n')
-        plik.close()
+        def file_saveXYZ(self, B, L, H, file_out):
+            """
+            Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji BLH -> XYZ 
+            do pliku wyjsciowego file_out w formacie .txt
+            """
+            
+            X = []
+            Y = []
+            Z = []
+            for a, b, c in zip(B, L, H):
+                x, y, z = Transformacje.plh2xyz(a, b, c)
+                X.append(x)
+                Y.append(y)
+                Z.append(z)
+                
+            plik=open(file_out,"w")
+            plik.write(f'  X[m]         Y[m]         Z[m] \n')
+            plik.write(f'# ----------------------------------------------------- \n')
+            for a,b,c in zip(X,Y,Z):
+                a = f'{a:7.3f}'
+                b = f'{b:7.3f}'
+                c = f'{c:7.3f}'
+                plik.write(f'{a},      {b},      {c} \n')
+            plik.close()
  
            
-if __name__ == "_main_":
-    geo = Transformacje("GRS80")
-    geo.wczytanie_zapisanie_pliku("wsp_inp.txt")
+if __name__ == "__main__":
+    geo = Transformacje("grs80")
+    geo.file_open("wsp_inp.txt")
     
     parser = ArgumentParser()
     parser.add_argument('-m', '--m', type=str, help="Podaj jedną z wskazanych elipsoid: GRS80, WGS84, mars")
@@ -423,7 +517,7 @@ if __name__ == "_main_":
     print("")
     print("")
     print("")
-    print("")  
+    print("") 
                  
 '''            def plik(self, file, transf):
                 dane = np.genfromtxt(file,delimiter = ' ')
