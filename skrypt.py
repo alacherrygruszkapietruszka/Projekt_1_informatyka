@@ -72,15 +72,15 @@ class Transformacje:
         """
         blh = []
         r   = sqrt(X**2 + Y**2)           # promień
-        lat_prev = atan(Z / (r * (1 - self.ecc2)))    # pierwsze przybliilizenie
+        lat_prev = atan(Z / (r * (1 - self.e2)))    # pierwsze przybliilizenie
         lat = 0
         while abs(lat_prev - lat) > 0.000001/206265:    
             lat_prev = lat
-            N = self.a / sqrt(1 - self.ecc2 * sin(lat_prev)**2)
+            N = self.a / sqrt(1 - self.e2 * sin(lat_prev)**2)
             h = r / cos(lat_prev) - N
-            lat = atan((Z/r) * (((1 - self.ecc2 * N/(N + h))**(-1))))
+            lat = atan((Z/r) * (((1 - self.e2 * N/(N + h))**(-1))))
         lon = atan(Y/X)
-        N = self.a / sqrt(1 - self.ecc2 * (sin(lat))**2);
+        N = self.a / sqrt(1 - self.e2 * (sin(lat))**2);
         h = r / cos(lat) - N       
         if output == "dec_degree":
             return degrees(lat), degrees(lon), h 
@@ -93,7 +93,7 @@ class Transformacje:
             raise NotImplementedError(f"{output} - output format not defined")
                 
 
-    def plh2xyz(self, phi, lam, h):
+    def flh2xyz(self, phi, lam, h):
         """
         Algorytm zamiany współrzędnych geodezyjnych: długość, szerokość i wysokośc elipsoidalna (phi, lam, h) na 
         współrzędne ortokartezjańskie (x, y, z).
@@ -114,8 +114,8 @@ class Transformacje:
         """
         phi = radians(phi)
         lam = radians(lam)
-        Rn = self.a/sqrt(1 - self.ecc2 * sin(phi)**2)
-        q = Rn * self.ecc2 * sin(phi)
+        Rn = self.a/sqrt(1 - self.e2 * sin(phi)**2)
+        q = Rn * self.e2 * sin(phi)
         x = (Rn + h) * cos(phi) * cos(lam)
         y = (Rn + h) * cos(phi) * sin(lam)
         z = (Rn + h) * sin(phi) - q 
@@ -249,7 +249,7 @@ class Transformacje:
            elif l >np.deg2rad(22.5) and l <= np.deg2rad(25.5):
                strefa = 8
                l0 = np.deg2rad(24)
-           b2 = (self.a**2) * (1-self.ep2)   #krotsza polos
+           b2 = (self.a**2) * (1-self.e2)   #krotsza polos
            e2p = ( self.a**2 - b2 ) / b2   #drugi mimosrod elipsy
            dl = l - l0
            t = np.tan(f)
@@ -286,7 +286,7 @@ class Transformacje:
         result = []
         lam0 = (19*np.pi)/180
         for f, l in zip(f,l):
-            b2 = (self.a**2) * (1-self.ep2)   #krotsza polos
+            b2 = (self.a**2) * (1-self.e2)   #krotsza polos
             e2p = ( self.a**2 - b2 ) / b2   #drugi mimosrod elipsy
             dlam = l - lam0
             t = np.tan(f)
@@ -305,7 +305,7 @@ class Transformacje:
            
             return result 
      
-    def open_save(self, plik, funkcja):
+    def open_and_save(self, plik, funkcja):
         with open(plik, 'r') as file:
             lines = file.readlines()
 
@@ -317,19 +317,20 @@ class Transformacje:
                 data_start_index = i + 1
             else:
                 break
+            
         data = np.genfromtxt(lines[data_start_index:], delimiter=",")
         if funkcja == "XYZ_BLH":
             X = data[:,0]
             Y = data[:,1]
             Z = data[:,2]
-            blh = self.xyz2plh(X, Y, Z)
+            blh = self.xyz2flh(X, Y, Z)
             np.savetxt(f"WYNIK_{funkcja}.txt", blh, delimiter=";")
         
         elif funkcja == "BLH_XYZ":
             phi = np.deg2rad(data[:,0])
             lam = np.deg2rad(data[:,1])
             h = data[:,2]
-            XYZ = self.plh2xyz(phi, lam, h)
+            XYZ = self.flh2xyz(phi, lam, h)
             np.savetxt(f"WYNIK_{funkcja}.txt",XYZ, delimiter=";")
             
         elif funkcja == "XYZ_NEU":
@@ -343,9 +344,9 @@ class Transformacje:
             np.savetxt(f"WYNIK_{funkcja}.txt", neu, delimiter=";")
             
         elif funkcja == "BL_PL1992":
-            f = np.deg2rad(data[:,0])
-            l = np.deg2rad(data[:,1])
-            result92 = self.PL1992(f, l)
+            f1 = np.deg2rad(data[:,0])
+            l1 = np.deg2rad(data[:,1])
+            result92 = self.PL1992(f1, l1)
             np.savetxt(f"WYNIK_{funkcja}.txt", result92, delimiter=";")
             
         elif funkcja == "BL_PL2000":
@@ -360,24 +361,22 @@ if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser(description="Podaj plik")
         parser.add_argument("-plik", type = str, help = "Podaj nazwę pliku, w którym znajdują się jako dane wejsciowe (ps. oprócz nazwy podaj rozszerzenie:)")
-        parser.add_argument('-elip', '--elip', type=str, help="Podaj jedną z wskazanych elipsoid: GRS80, WGS84, mars")
+        parser.add_argument('-elip', type=str, help="Podaj jedną z wskazanych elipsoid: GRS80, WGS84, mars")
         parser.add_argument("-funkcja", type = str, help = "Wybierz transformację jaką chcesz obliczyć: 'XYZ_BLH', 'BLH_XYZ', 'XYZ_NEU' ")
         args = parser.parse_args()
+     
+        elip = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'mars':[3396900.000, 0.008725863396028901]}
+        funkcja = {'XYZ_BLH':'xyz2flh', 'BLH_XYZ': 'flh2xyz', 'XYZ_NEU': 'xyz2neu', 'BL_PL2000': 'PL2000', 'BL_PL1992': 'PL1992'}
+    
+    
+        geo = Transformacje(elip[args.elip.upper()])
+        finito = geo.open_and_save(args.plik, args.funkcja.upper())
+        print("Zapisano")
+        
     except SyntaxError:
         print(f"Niestety nie ma takiego pliku. Spróbuj podać pełną scieżkę do pliku lub upewnij się że wpisujesz dobrą nazwę")
-       
- 
-    elip = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'mars':[3396900.000, 0.012210250000002741]}
-    funkcja = {'XYZ_BLH':'xyz2plh', 'BLH_XYZ': 'plh2xyz', 'XYZ_NEU': 'xyz2neu', 'BL_PL2000': 'PL2000', 'BL_PL1992': 'PL1992'}
-    
-     
-     
-     
-    try:
-        geo = Transformacje(elip[args.elip.upper()])
-        finito = geo.plik(args.plik, args.funkcja.upper())
-        print("Zapisano")
-    except KeyError():
+           
+    except KeyError:
         print(f"Podana funkcja/elipsoida nie istnieją, proszę upewnij się, że korzystasz z istniejących elipsoid")
     except AttributeError:
         print("Podana funkcja/elipsoida nie istnieje, proszę wprowadzić dostępne wartosci.")
