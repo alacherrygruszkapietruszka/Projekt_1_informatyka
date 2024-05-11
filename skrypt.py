@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 o = object()
 
 class Transformacje:
-    def __init__(self, model: str = "wgs84"):
+    def __init__(self, elipsoida):
         """
         Parametry elipsoid:
             a - duża półoś elipsoidy - promień równikowy
@@ -17,6 +17,9 @@ class Transformacje:
         + WGS84: https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84
         + Inne powierzchnie odniesienia: https://en.wikibooks.org/wiki/PROJ.4#Spheroid
         + Parametry planet: https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
+        """
+        self.a = elipsoida[0]
+        self.e2 = elipsoida[1]
         """
         if model == "WGS84":
             self.a = 6378137.0 # semimajor_axis
@@ -32,7 +35,7 @@ class Transformacje:
         self.flat = (self.a - self.b) / self.a
         self.ecc = sqrt(2 * self.flat - self.flat ** 2) # eccentricity  WGS84:0.0818191910428 
         self.ecc2 = (2 * self.flat - self.flat ** 2) # eccentricity**2
-
+        """
     def Npu(self, fi):     #promien krzywizny w I wertykale
         N = self.a / np.sqrt(1 - self.e2 * np.sin(fi)**2)
         return(N)
@@ -364,7 +367,7 @@ if __name__ == "__main__":
         print(f"Niestety nie ma takiego pliku. Spróbuj podać pełną scieżkę do pliku lub upewnij się że wpisujesz dobrą nazwę")
        
  
-    elip = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'mars':[3396900.000, 3376097.80585952]}
+    elip = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'mars':[3396900.000, 0.012210250000002741]}
     funkcja = {'XYZ_BLH':'xyz2plh', 'BLH_XYZ': 'plh2xyz', 'XYZ_NEU': 'xyz2neu', 'BL_PL2000': 'PL2000', 'BL_PL1992': 'PL1992'}
     
      
