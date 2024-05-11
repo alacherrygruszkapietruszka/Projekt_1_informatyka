@@ -299,7 +299,7 @@ class Transformacje:
            
             return result 
      
-    def file_open(self, name):
+    def file_open(self, plik, funkcja):
         """
         Wczytanie pliku .txt i wyodrębnienie podanych w nim współrzędnych
         za pomocą pętli for. Odczytane dane dodajemy do list.
@@ -480,24 +480,19 @@ class Transformacje:
  
            
 if __name__ == "__main__":
-    geo = Transformacje("grs80")
     
-    
-    parser = ArgumentParser()
-    parser = argparse.ArgumentParser(description="Podaj plik")
-    parser.add_argument("-plik", type = str, help = "Podaj nazwę pliku, w którym znajdują się dane wejsciowe (ps. oprócz nazwy podaj rozszerzenie:)")
-    parser.add_argument('-elip', '--elip', type=str, help="Podaj jedną z wskazanych elipsoid: GRS80, WGS84, mars")
-    parser.add_argument('-neu', '--neu', type=str, help="Podaj nazwe pliku wynikiowego dla neu z rozszerzeniem txt")
-    parser.add_argument('-xa', '--xa', type=float)
-    parser.add_argument('-ya', '--ya', type=float)
-    parser.add_argument('-za', '--za', type=float)
-    parser.add_argument('-xb', '--xb', type=float)
-    parser.add_argument('-yb', '--yb', type=float)
-    parser.add_argument('-zb', '--zb', type=float)
-    args = parser.parse_args()
+    try:
+        parser = argparse.ArgumentParser(description="Podaj plik")
+        parser.add_argument("-plik", type = str, help = "Podaj nazwę pliku, w którym znajdują się jako dane wejsciowe (ps. oprócz nazwy podaj rozszerzenie:)")
+        parser.add_argument('-elip', '--elip', type=str, help="Podaj jedną z wskazanych elipsoid: GRS80, WGS84, mars")
+        parser.add_argument("-funkcja", type = str, help = "Wybierz transformację jaką chcesz obliczyć: 'XYZ_BLH', 'BLH_XYZ', 'XYZ_NEU' ")
+        args = parser.parse_args()
+    except SyntaxError:
+        print(f"Niestety nie ma takiego pliku. Spróbuj podać pełną scieżkę do pliku lub upewnij się że wpisujesz dobrą nazwę")
+       
  
     elip = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'mars':[3396900.000, 3376097.80585952]}
- 
+    funkcja = {'XYZ_BLH':'xyz2plh', 'BLH_XYZ': 'plh2xyz', 'XYZ_NEU': 'xyz2neu', 'BL_PL2000': 'PL2000', 'BL_PL1992': 'PL1992'}
     geo = Transformacje(model = args.elip)
     f, l, h = geo.xyz2flh(args.xa, args.ya, args.za)
     n, e, u = geo.xyz2neu(f, l, args.xa, args.ya, args.za, args.xb, args.yb, args.zb)
