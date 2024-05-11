@@ -2,7 +2,7 @@ from math import sin, cos, sqrt, atan, atan2, degrees, radians
 import numpy as np
 import argparse as args, argparse
 from argparse import ArgumentParser
-
+import os
 
 o = object()
 
@@ -318,21 +318,21 @@ class Transformacje:
                 data_start_index = i + 1
             else:
                 break
-            
+        current_dir = os.path.dirname(os.path.abspath(__file__))
         data = np.genfromtxt(lines[data_start_index:], delimiter=",")
         if funkcja == "XYZ_BLH":
             X = data[:,0]
             Y = data[:,1]
             Z = data[:,2]
             blh = self.xyz2flh(X, Y, Z)
-            np.savetxt(f"WYNIK_{funkcja}.txt", blh, delimiter=";")
+            np.savetxt(os.path.join(current_dir,f"WYNIK_{funkcja}.txt"), blh, delimiter=";")
         
         elif funkcja == "BLH_XYZ":
             phi = np.deg2rad(data[:,0])
             lam = np.deg2rad(data[:,1])
             h = data[:,2]
             XYZ = self.flh2xyz(phi, lam, h)
-            np.savetxt(f"WYNIK_{funkcja}.txt",XYZ, delimiter=";")
+            np.savetxt(os.path.join(current_dir,f"WYNIK_{funkcja}.txt"),XYZ, delimiter=";")
             
         elif funkcja == "XYZ_NEU":
             f = data[0,0]
@@ -344,19 +344,19 @@ class Transformacje:
             Y = data[0,7]
             Z = data[0,8]
             neu = self.xyz2neu(f, l, X, Y, Z, X0, Y0, Z0)
-            np.savetxt(f"WYNIK_{funkcja}.txt", neu, delimiter=";")
+            np.savetxt(os.path.join(current_dir,f"WYNIK_{funkcja}.txt"), neu, delimiter=";")
             
         elif funkcja == "BL_PL1992":
             f1 = np.deg2rad(data[:,0])
             l1 = np.deg2rad(data[:,1])
             result92 = self.PL1992(f1, l1)
-            np.savetxt(f"WYNIK_{funkcja}.txt", result92, delimiter=";")
+            np.savetxt(os.path.join(current_dir,f"WYNIK_{funkcja}.txt"), result92, delimiter=";")
             
         elif funkcja == "BL_PL2000":
             f = np.deg2rad(data[:,0])
             l = np.deg2rad(data[:,1])
             result00 = self.PL2000(f, l)
-            np.savetxt(f"WYNIK_{funkcja}.txt", result00, delimiter=";")
+            np.savetxt(os.path.join(current_dir,f"WYNIK_{funkcja}.txt"), result00, delimiter=";")
  
            
 if __name__ == "__main__":
