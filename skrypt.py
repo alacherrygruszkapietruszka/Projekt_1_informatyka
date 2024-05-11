@@ -67,6 +67,7 @@ class Transformacje:
             dec_degree - decimal degree
             dms - degree, minutes, sec
         """
+        blh = []
         r   = sqrt(X**2 + Y**2)           # promień
         lat_prev = atan(Z / (r * (1 - self.ecc2)))    # pierwsze przybliilizenie
         lat = 0
@@ -83,7 +84,7 @@ class Transformacje:
         elif output == "dms":
             lat = self.deg2dms(degrees(lat))
             lon = self.deg2dms(degrees(lon))
-            blh = f"{lat[0]:02d}:{lat[1]:02d}:{lat[2]:.2f}", f"{lon[0]:02d}:{lon[1]:02d}:{lon[2]:.2f}", f"{h:.3f}"
+            blh = blh.extend([lat, lon, h])
             return blh
         else:
             raise NotImplementedError(f"{output} - output format not defined")
