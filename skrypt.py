@@ -334,13 +334,15 @@ class Transformacje:
             np.savetxt(f"WYNIK_{funkcja}.txt",XYZ, delimiter=";")
             
         elif funkcja == "XYZ_NEU":
-            X0 = data[0,0]
-            Y0 = data[0,1]
-            Z0 = data[0,2]
-            X = data[1,0]
-            Y = data[1,1]
-            Z = data[1,2]
-            neu = self.xyz2neu(X, Y, Z, X0, Y0, Z0)
+            f = data[0,0]
+            l = data[0,1]
+            X0 = data[0,2]
+            Y0 = data[0,3]
+            Z0 = data[0,5]
+            X = data[0,6]
+            Y = data[0,7]
+            Z = data[0,8]
+            neu = self.xyz2neu(f, l, X, Y, Z, X0, Y0, Z0)
             np.savetxt(f"WYNIK_{funkcja}.txt", neu, delimiter=";")
             
         elif funkcja == "BL_PL1992":
