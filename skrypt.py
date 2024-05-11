@@ -481,10 +481,12 @@ class Transformacje:
            
 if __name__ == "__main__":
     geo = Transformacje("grs80")
-    geo.file_open("wsp_inp.txt")
+    
     
     parser = ArgumentParser()
-    parser.add_argument('-m', '--m', type=str, help="Podaj jedną z wskazanych elipsoid: GRS80, WGS84, mars")
+    parser = argparse.ArgumentParser(description="Podaj plik")
+    parser.add_argument("-plik", type = str, help = "Podaj nazwę pliku, w którym znajdują się dane wejsciowe (ps. oprócz nazwy podaj rozszerzenie:)")
+    parser.add_argument('-elip', '--elip', type=str, help="Podaj jedną z wskazanych elipsoid: GRS80, WGS84, mars")
     parser.add_argument('-neu', '--neu', type=str, help="Podaj nazwe pliku wynikiowego dla neu z rozszerzeniem txt")
     parser.add_argument('-xa', '--xa', type=float)
     parser.add_argument('-ya', '--ya', type=float)
@@ -494,8 +496,9 @@ if __name__ == "__main__":
     parser.add_argument('-zb', '--zb', type=float)
     args = parser.parse_args()
  
+    elip = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'mars':[3396900.000, 3376097.80585952]}
  
-    geo = Transformacje(model = args.m)
+    geo = Transformacje(model = args.elip)
     f, l, h = geo.xyz2flh(args.xa, args.ya, args.za)
     n, e, u = geo.xyz2neu(f, l, args.xa, args.ya, args.za, args.xb, args.yb, args.zb)
      
@@ -507,15 +510,18 @@ if __name__ == "__main__":
     u = float(u)
      
      
-    print("")
-    print("")
-    print("")
-    print("")
-    print("Elipsida:", args.m)
-    print(f"Wyniki_z_xyz2neu; n = {n}, e = {e}, u = {u}")
-    print("Nazwa pliku głównego:", skrypt.__name__)
-    print("")
-    print("")
-    print("")
-    print("") 
+    try:
+        geo = Transformacje(elip[args.elip.upper()])
+        finito = geo.plik(args.plik, args.funkcja.upper())
+        print("Zapisano")
+    except KeyError():
+        print(f"Podana funkcja/elipsoida nie istnieją, proszę upewnij się, że korzystasz z istniejących elipsoid")
+    except AttributeError:
+        print("Podana funkcja/elipsoida nie istnieje, proszę wprowadzić dostępne wartosci.")
+    except FileNotFoundError:
+        print("Nie znaleziono takiego pliku. Proszę spróbować wprowadzić inny plik.")
+    except IndexError:
+        print("Nieodpowiedni format pliku. Proszę wprowadzić dane do pliku tak jak pokazano w przyładzie.")
+    except ValueError:
+        print("Nieodpowiedni format pliku. Proszę wprowadzić dane do pliku tak jak pokazano w przyładzie.")
                  
