@@ -18,10 +18,10 @@ class Transformacje:
         + Inne powierzchnie odniesienia: https://en.wikibooks.org/wiki/PROJ.4#Spheroid
         + Parametry planet: https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
         """
-        if model == "wgs84":
+        if model == "WGS84":
             self.a = 6378137.0 # semimajor_axis
             self.b = 6356752.31424518 # semiminor_axis
-        elif model == "grs80":
+        elif model == "GRS80":
             self.a = 6378137.0
             self.b = 6356752.31414036
         elif model == "mars":
