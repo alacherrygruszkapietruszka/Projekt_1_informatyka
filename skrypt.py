@@ -183,6 +183,7 @@ class Transformacje:
             
 
         '''
+        neu = []
         dX = Transformacje.get_dXYZ(self, xa, ya, za, xb, yb, zb)
         R = Transformacje.rneu(self, f,l)
         neu = R.T @ dX
@@ -205,8 +206,8 @@ class Transformacje:
         while zz < P:
             u = str(" ") + u
             zz +=1
-            
-        return(n, e, u)
+        neu.append([n, e, u])
+        return(neu)
     
            
             
@@ -301,184 +302,54 @@ class Transformacje:
            
             return result 
      
-    def file_open(self, plik, funkcja):
-        """
-        Wczytanie pliku .txt i wyodrębnienie podanych w nim współrzędnych
-        za pomocą pętli for. Odczytane dane dodajemy do list.
-        
-        Parameters:
-        -----------
-        name : str
-            Nazwa pliku do odczytania.
-    
-        Returns:
-        --------
-        X : list[float]
-            Lista zawierająca współrzędne X.
-        Y : list[float]
-            Lista zawierająca współrzędne Y.
-        Z : list[float]
-            Lista zawierająca współrzędne Z.
-        """
-        X = []
-        Y = []
-        Z = []
-        with open(name, 'r') as file:
-            tab = np.genfromtxt(file, delimiter = "," , dtype ='<U20', skip_header = 4)
-            for line in tab:
-                x = line[0]
-                X.append(float(x[0]))
-                Y.append(float(x[1]))
-                Z.append(float(x[2]))
-        return X, Y, Z
+    def open_save(self, plik, funkcja):
+        with open(plik, 'r') as file:
+            lines = file.readlines()
 
-    def file_save92(self, X, Y, Z, file_out):
-        """
-        Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji XYZ -> PL-1992 
-        do pliku wyjsciowego file_out w formacie .txt
-        """
+        # Pominięcie nagłówka składającego się z samych liter
+        data_start_index = 0
+        for i, line in enumerate(lines):
+            if not line.strip().replace('.', '').replace(',', '').replace('-', '').isdigit():
+                # Jeśli linia nie składa się tylko z cyfr, uznajemy ją za nagłówek
+                data_start_index = i + 1
+            else:
+                break
+        data = np.genfromtxt(lines[data_start_index:], delimiter=",")
+        if funkcja == "XYZ_BLH":
+            X = data[:,0]
+            Y = data[:,1]
+            Z = data[:,2]
+            blh = self.xyz2plh(X, Y, Z)
+            np.savetxt(f"WYNIK_{funkcja}.txt", blh, delimiter=";")
         
-        X92 = []
-        Y92 = []
-        for a, b, c in zip(X, Y, Z):
-            x92, y92 = Transformacje.PL1992(a, b, c)           
-            X92.append(x92)
-            Y92.append(y92)
+        elif funkcja == "BLH_XYZ":
+            phi = np.deg2rad(data[:,0])
+            lam = np.deg2rad(data[:,1])
+            h = data[:,2]
+            XYZ = self.plh2xyz(phi, lam, h)
+            np.savetxt(f"WYNIK_{funkcja}.txt",XYZ, delimiter=";")
             
-        plik=open(file_out,"w")
-        plik.write(f'# PL-1992---------------------------------------------- \n')
-        plik.write(f'  X[m]         Y[m] \n')
-        plik.write(f'# ----------------------------------------------------- \n')
-        for a,b in zip(X92,Y92):
-            a = f'{a:7.3f}'
-            b = f'{b:7.3f}'
-            plik.write(f'{a},   {b} \n')
-        plik.close()
-    
-    def file_save00(self, X, Y, Z, file_out):
-        """
-        Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji XYZ -> PL-2000 
-        do pliku wyjsciowego file_out w formacie .txt
-        """
-        
-        X00 = []
-        Y00 = []
-        for a, b, c in zip(X, Y, Z):
-            x00, y00 = Transformacje.PL2000(a, b, c)
-            X00.append(x00)
-            Y00.append(y00)
+        elif funkcja == "XYZ_NEU":
+            X0 = data[0,0]
+            Y0 = data[0,1]
+            Z0 = data[0,2]
+            X = data[1,0]
+            Y = data[1,1]
+            Z = data[1,2]
+            neu = self.xyz2neu(X, Y, Z, X0, Y0, Z0)
+            np.savetxt(f"WYNIK_{funkcja}.txt", neu, delimiter=";")
             
-        plik=open(file_out,"w")
-        plik.write(f'# PL-2000---------------------------------------------- \n')
-        plik.write(f'  X[m]         Y[m] \n')
-        plik.write(f'# ----------------------------------------------------- \n')
-        for a,b in zip(X00,Y00):
-            a = f'{a:7.3f}'
-            b = f'{b:7.3f}'
-            plik.write(f'{a},   {b} \n')
-        plik.close()
-
-    
-    def file_saveFLH(self, X, Y, Z, file_out):
-        """
-        Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji XYZ -> BLH 
-        do pliku wyjsciowego file_out w formacie .txt
-        """
-        
-        F = []
-        L = []
-        H = []
-        for a, b, c in zip(X, Y, Z):
-            f, l, h = Transformacje.xyz2flh(a, b, c)
-            F.append(degrees(f))
-            L.append(degrees(l))
-            H.append(h)
+        elif funkcja == "BL_PL1992":
+            f = np.deg2rad(data[:,0])
+            l = np.deg2rad(data[:,1])
+            result92 = self.PL1992(f, l)
+            np.savetxt(f"WYNIK_{funkcja}.txt", result92, delimiter=";")
             
-        plik=open(file_out,"w")
-        plik.write(f'  B[d]         L[d]         H[m] \n')
-        plik.write(f'# ----------------------------------------------------- \n')
-        for a,b,c in zip(F,L,H):
-            a = f'{a:7.4f}'
-            b = f'{b:7.4f}'
-            c = f'{c:7.3f}'
-            plik.write(f'{a},      {b},      {c} \n')
-        plik.close()
-            
-    def file_saveNEU(self, X, Y, Z, file_out):
-        """
-        Funkcja pozwala na zapisanie wyników transformacji XYZ -> NEU do pliku.
-    
-        Parameters:
-        -----------
-        X : float
-            Współrzędna X w układzie ortokartezjańskim.
-        Y : float
-            Współrzędna Y w układzie ortokartezjańskim.
-        Z : float
-            Współrzędna Z w układzie ortokartezjańskim.
-        file_out : str
-            Nazwa pliku do zapisania.
-    
-        Returns:
-        --------
-        None
-        """
-        dX = self.get_dXYZ(X[0], Y[0], Z[0], X[1], Y[1], Z[1])
-        R = self.rneu(self.f, self.l)
-        neu = R.T @ dX
-        n = "%.16f" % neu[0]
-        e = "%.16f" % neu[1]
-        u = "%.16f" % neu[2]
-        dlugosc = []
-        xx = len(n)
-        dlugosc.append(xx)
-        yy = len(e)
-        dlugosc.append(yy)
-        zz = len(u)
-        dlugosc.append(zz)
-        P = 50
-    
-        while xx < P:
-            n = str(" ") + n
-            xx += 1
-    
-        while yy < P:
-            e = str(" ") + e
-            yy += 1
-    
-        while zz < P:
-            u = str(" ") + u
-            zz += 1
-    
-        with open(file_out, "w") as plik:
-            plik.write(f'  N[m]         E[m]         U[m] \n')
-            plik.write(f'# ----------------------------------------------------- \n')
-            plik.write(f'{n},   {e},      {u} \n')
-            
-        def file_saveXYZ(self, B, L, H, file_out):
-            """
-            Funkcja ta pozwala zapisać współrzędne otrzymane po transformacji BLH -> XYZ 
-            do pliku wyjsciowego file_out w formacie .txt
-            """
-            
-            X = []
-            Y = []
-            Z = []
-            for a, b, c in zip(B, L, H):
-                x, y, z = Transformacje.plh2xyz(a, b, c)
-                X.append(x)
-                Y.append(y)
-                Z.append(z)
-                
-            plik=open(file_out,"w")
-            plik.write(f'  X[m]         Y[m]         Z[m] \n')
-            plik.write(f'# ----------------------------------------------------- \n')
-            for a,b,c in zip(X,Y,Z):
-                a = f'{a:7.3f}'
-                b = f'{b:7.3f}'
-                c = f'{c:7.3f}'
-                plik.write(f'{a},      {b},      {c} \n')
-            plik.close()
+        elif funkcja == "BL_PL2000":
+            f = np.deg2rad(data[:,0])
+            l = np.deg2rad(data[:,1])
+            result00 = self.PL2000(f, l)
+            np.savetxt(f"WYNIK_{funkcja}.txt", result00, delimiter=";")
  
            
 if __name__ == "__main__":
@@ -499,12 +370,6 @@ if __name__ == "__main__":
     f, l, h = geo.xyz2flh(args.xa, args.ya, args.za)
     n, e, u = geo.xyz2neu(f, l, args.xa, args.ya, args.za, args.xb, args.yb, args.zb)
      
-     
-    geo.file_saveNEU(args.neu, n, e, u)
-     
-    n = float(n)
-    e = float(e)
-    u = float(u)
      
      
     try:
