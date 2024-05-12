@@ -320,32 +320,34 @@ class Transformacje:
     
         data = np.genfromtxt(lines[data_start_index:], delimiter=",")
     
+        np.set_printoptions(precision=5, suppress=True)
+    
         if funkcja == "XYZ_BLH":
             X = data[:,0]
             Y = data[:,1]
             Z = data[:,2]
             blh = self.xyz2flh(X, Y, Z)
             header = "Transformacja XYZ -> BLH"
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), blh, delimiter=",", header=header, fmt="%.3f")
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), blh, delimiter=",", header=header)
         elif funkcja == "BLH_XYZ":
             phi = np.deg2rad(data[:,0])
             lam = np.deg2rad(data[:,1])
             h = data[:,2]
             XYZ = self.flh2xyz(phi, lam, h)
             header = "Transformacja BLH -> XYZ"
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), XYZ, delimiter=",", header=header, fmt="%.3f")
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), XYZ, delimiter=",", header=header)
         elif funkcja == "BL_PL1992":
             f1 = np.deg2rad(data[:,0])
             l1 = np.deg2rad(data[:,1])
             result92 = self.PL1992(f1, l1)
             header = "Transformacja BLH -> PL1992"
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result92, delimiter=",", header=header, fmt="%.3f")
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result92, delimiter=",", header=header)
         elif funkcja == "BL_PL2000":
             f = np.deg2rad(data[:,0])
             l = np.deg2rad(data[:,1])
             result00 = self.PL2000(f, l)
             header = "Transformacja BLH -> PL2000"
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result00, delimiter=",", header=header, fmt="%.3f")
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result00, delimiter=",", header=header)
         elif funkcja == "XYZ_NEU":
             f = data[0,0]
             l = data[0,1]
@@ -357,7 +359,7 @@ class Transformacje:
             Z = data[0,8]
             neu = self.xyz2neu(f, l, X, Y, Z, X0, Y0, Z0)
             header = "Transformacja XYZ -> NEU"
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), neu, delimiter=",", header=header, fmt="%.3f")
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), neu, delimiter=",", header=header)
 
  
            
