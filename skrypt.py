@@ -359,10 +359,10 @@ class Transformacje:
             l = data[0,1]
             X0 = data[0,2]
             Y0 = data[0,3]
-            Z0 = data[0,5]
-            X = data[0,6]
-            Y = data[0,7]
-            Z = data[0,8]
+            Z0 = data[0,4]
+            X = data[0,5]
+            Y = data[0,6]
+            Z = data[0,7]
             neu = self.xyz2neu(f, l, X, Y, Z, X0, Y0, Z0)
             header = "Transformacja XYZ -> NEU"
             np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), neu, delimiter=",", header=header, fmt='%.8f')
