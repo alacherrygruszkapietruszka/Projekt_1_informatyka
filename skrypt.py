@@ -300,14 +300,7 @@ if __name__ == "__main__":
     try:
         with open(plik, 'r') as f, open(f"WYNIK_{trans_wsp.upper()}.txt", 'w') as wynik:
             linie = f.readlines()
-            
-            # Pominięcie nagłówka składającego się zarówno z liter, jak i cyfr
-            data_start_index = 0
-            for i, line in enumerate(linie):
-                if not any(c.isalpha() for c in line.strip()) or all(c.isdigit() or c in '.,' for c in line.strip()):
-                    data_start_index = i
-                    break
-            linie = linie[data_start_index:]
+            linie = linie[4:]
             for index, linia in enumerate(linie): 
                 linia = linia.strip()
                 if trans_wsp in ['XYZ_BLH', 'BLH_XYZ', 'XYZ_NEU']:
