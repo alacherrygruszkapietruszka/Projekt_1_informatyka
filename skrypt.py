@@ -329,7 +329,8 @@ class Transformacje:
             blh = self.xyz2flh(X, Y, Z)
             header = "Transformacja XYZ -> BLH"
             # Zapisujemy dane po trzy w wierszu
-            blh_str = '\n'.join(','.join(f'{x:.5f}' for x in row) for row in blh)
+            formatted_blh = [','.join(f'{x:.5f}' for x in row) for row in blh]
+            blh_str = '\n'.join(','.join(formatted_blh[i:i+3]) for i in range(0, len(formatted_blh), 3))
             with open(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), 'w') as f:
                 f.write(header + '\n')
                 f.write(blh_str)
@@ -364,8 +365,8 @@ class Transformacje:
             neu = self.xyz2neu(f, l, X, Y, Z, X0, Y0, Z0)
             header = "Transformacja XYZ -> NEU"
             np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), neu, delimiter=",", header=header, fmt='%.5f')
-
- 
+    
+     
            
 if __name__ == "__main__":
     
