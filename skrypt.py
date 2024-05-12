@@ -310,31 +310,42 @@ class Transformacje:
 
         with open(plik, 'r') as file:
             lines = file.readlines()
-
-        # Pominięcie nagłówka składającego się z samych liter
+    
+        # Pominięcie nagłówka składającego się zarówno z liter, jak i cyfr
         data_start_index = 0
         for i, line in enumerate(lines):
-            if not line.strip().replace('.', '').replace(',', '').replace('-', '').isdigit():
-                # Jeśli linia nie składa się tylko z cyfr, uznajemy ją za nagłówek
-                data_start_index = i + 1
-            else:
+            if not any(c.isalpha() for c in line.strip()) or all(c.isdigit() or c in '.,' for c in line.strip()):
+                data_start_index = i
                 break
-        current_dir = os.path.dirname(os.path.abspath(__file__))
+    
         data = np.genfromtxt(lines[data_start_index:], delimiter=",")
+    
         if funkcja == "XYZ_BLH":
             X = data[:,0]
             Y = data[:,1]
             Z = data[:,2]
             blh = self.xyz2flh(X, Y, Z)
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), blh, delimiter=";")
-        
+            header = "Transformacja XYZ -> BLH"
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), blh, delimiter=",", header=header, fmt="%.3f")
         elif funkcja == "BLH_XYZ":
             phi = np.deg2rad(data[:,0])
             lam = np.deg2rad(data[:,1])
             h = data[:,2]
             XYZ = self.flh2xyz(phi, lam, h)
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"),XYZ, delimiter=";")
-            
+            header = "Transformacja BLH -> XYZ"
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), XYZ, delimiter=",", header=header, fmt="%.3f")
+        elif funkcja == "BL_PL1992":
+            f1 = np.deg2rad(data[:,0])
+            l1 = np.deg2rad(data[:,1])
+            result92 = self.PL1992(f1, l1)
+            header = "Transformacja BLH -> PL1992"
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result92, delimiter=",", header=header, fmt="%.3f")
+        elif funkcja == "BL_PL2000":
+            f = np.deg2rad(data[:,0])
+            l = np.deg2rad(data[:,1])
+            result00 = self.PL2000(f, l)
+            header = "Transformacja BLH -> PL2000"
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result00, delimiter=",", header=header, fmt="%.3f")
         elif funkcja == "XYZ_NEU":
             f = data[0,0]
             l = data[0,1]
@@ -345,19 +356,9 @@ class Transformacje:
             Y = data[0,7]
             Z = data[0,8]
             neu = self.xyz2neu(f, l, X, Y, Z, X0, Y0, Z0)
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), neu, delimiter=";")
-            
-        elif funkcja == "BL_PL1992":
-            f1 = np.deg2rad(data[:,0])
-            l1 = np.deg2rad(data[:,1])
-            result92 = self.PL1992(f1, l1)
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result92, delimiter=";")
-            
-        elif funkcja == "BL_PL2000":
-            f = np.deg2rad(data[:,0])
-            l = np.deg2rad(data[:,1])
-            result00 = self.PL2000(f, l)
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result00, delimiter=";")
+            header = "Transformacja XYZ -> NEU"
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), neu, delimiter=",", header=header, fmt="%.3f")
+
  
            
 if __name__ == "__main__":
