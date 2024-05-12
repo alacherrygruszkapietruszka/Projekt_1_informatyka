@@ -48,49 +48,50 @@ class Transformacje:
         sigma = self.a * ( A0 * fi - A2 * np.sin(2*fi) + A4 * np.sin(4*fi) - A6 * np.sin(6*fi) )
         return(sigma)        
 
-    def xyz2flh(self, X, Y, Z, output = 'dec_degree'):
+    def xyz2flh(self, X, Y, Z, output='dec_degree'):
         """
         Algorytm Hirvonena - algorytm transformacji współrzędnych ortokartezjańskich (x, y, z)
         na współrzędne geodezyjne długość szerokość i wysokośc elipsoidalna (phi, lam, h). Jest to proces iteracyjny. 
         W wyniku 3-4-krotneej iteracji wyznaczenia wsp. phi można przeliczyć współrzędne z dokładnoscią ok 1 cm.     
         Parameters
         ----------
-        X, Y, Z : FLOAT
+        X, Y, Z : ARRAY
              współrzędne w układzie orto-kartezjańskim, 
-
+    
         Returns
         -------
         lat
             [stopnie dziesiętne] - szerokość geodezyjna
         lon
             [stopnie dziesiętne] - długośc geodezyjna.
-        h : TYPE
+        h : ARRAY
             [metry] - wysokość elipsoidalna
-        output [STR] - optional, defoulf 
+        output [STR] - optional, default 
             dec_degree - decimal degree
             dms - degree, minutes, sec
         """
         blh = []
-        r   = sqrt(X**2 + Y**2)           # promień
-        lat_prev = atan(Z / (r * (1 - self.e2)))    # pierwsze przybliilizenie
-        lat = 0
-        while abs(lat_prev - lat) > 0.000001/206265:    
+        r = np.sqrt(X**2 + Y**2)  # promień
+        lat_prev = np.arctan(Z / (r * (1 - self.e2)))  # pierwsze przybliilizenie
+        lat = np.zeros_like(lat_prev)
+        while np.any(np.abs(lat_prev - lat) > 0.000001 / 206265):
             lat_prev = lat
-            N = self.a / sqrt(1 - self.e2 * sin(lat_prev)**2)
-            h = r / cos(lat_prev) - N
-            lat = atan((Z/r) * (((1 - self.e2 * N/(N + h))**(-1))))
-        lon = atan(Y/X)
-        N = self.a / sqrt(1 - self.e2 * (sin(lat))**2);
-        h = r / cos(lat) - N       
+            N = self.a / np.sqrt(1 - self.e2 * np.sin(lat_prev)**2)
+            h = r / np.cos(lat_prev) - N
+            lat = np.arctan((Z / r) * (((1 - self.e2 * N / (N + h))**(-1))))
+        lon = np.arctan2(Y, X)
+        N = self.a / np.sqrt(1 - self.e2 * (np.sin(lat))**2)
+        h = r / np.cos(lat) - N
         if output == "dec_degree":
-            return degrees(lat), degrees(lon), h 
+            return np.degrees(lat), np.degrees(lon), h
         elif output == "dms":
-            lat = self.deg2dms(degrees(lat))
-            lon = self.deg2dms(degrees(lon))
+            lat = self.deg2dms(np.degrees(lat))
+            lon = self.deg2dms(np.degrees(lon))
             blh = blh.extend([lat, lon, h])
             return blh
         else:
             raise NotImplementedError(f"{output} - output format not defined")
+
                 
 
     def flh2xyz(self, phi, lam, h):
