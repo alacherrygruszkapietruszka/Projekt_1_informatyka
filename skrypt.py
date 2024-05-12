@@ -106,21 +106,22 @@ class Transformacje:
             [stopnie dziesiętne] - długośc geodezyjna.
         h : TYPE
             [metry] - wysokość elipsoidalna
-
+    
         Returns
         -------
         X, Y, Z : FLOAT
              [metry] - współrzędne w układzie orto-kartezjańskim, 
         
         """
-        phi = radians(phi)
-        lam = radians(lam)
-        Rn = self.a/sqrt(1 - self.e2 * sin(phi)**2)
-        q = Rn * self.e2 * sin(phi)
-        x = (Rn + h) * cos(phi) * cos(lam)
-        y = (Rn + h) * cos(phi) * sin(lam)
-        z = (Rn + h) * sin(phi) - q 
+        phi = np.radians(phi)
+        lam = np.radians(lam)
+        Rn = self.a / np.sqrt(1 - self.e2 * np.sin(phi) ** 2)
+        q = Rn * self.e2 * np.sin(phi)
+        x = (Rn + h) * np.cos(phi) * np.cos(lam)
+        y = (Rn + h) * np.cos(phi) * np.sin(lam)
+        z = (Rn * (1 - self.e2) + h) * np.sin(phi)
         return x, y, z
+
             
     def get_dXYZ(self, xa, ya, za, xb, yb, zb):
         '''
@@ -323,36 +324,36 @@ class Transformacje:
         np.set_printoptions(precision=5, suppress=True)
     
         if funkcja == "XYZ_BLH":
-            X = data[:,0]
-            Y = data[:,1]
+            X = float.data[:,0]
+            Y = float.data[:,1]
             Z = data[:,2]
             blh = self.xyz2flh(X, Y, Z)
             header = "Transformacja XYZ -> BLH"
             # Zapisujemy dane po trzy w wierszu
-            formatted_blh = [','.join(f'{x:.5f}' for x in row) for row in blh]
+            formatted_blh = [','.join(f'{x:.8f}' for x in row) for row in blh]
             blh_str = '\n'.join(','.join(formatted_blh[i:i+3]) for i in range(0, len(formatted_blh), 3))
             with open(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), 'w') as f:
                 f.write(header + '\n')
                 f.write(blh_str)
         elif funkcja == "BLH_XYZ":
-            phi = np.deg2rad(data[:,0])
-            lam = np.deg2rad(data[:,1])
+            phi = data[:,0]
+            lam = data[:,1]
             h = data[:,2]
             XYZ = self.flh2xyz(phi, lam, h)
-            header = "Transformacja BLH -> XYZ"
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), XYZ, delimiter=",", header=header, fmt='%.5f')
+            header = "Transformacja BLh -> XYZ"
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), XYZ, delimiter=",", header=header, fmt='%.8f')
         elif funkcja == "BL_PL1992":
             f1 = np.deg2rad(data[:,0])
             l1 = np.deg2rad(data[:,1])
             result92 = self.PL1992(f1, l1)
-            header = "Transformacja BLH -> PL1992"
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result92, delimiter=",", header=header, fmt='%.5f')
+            header = "Transformacja BL -> PL1992"
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result92, delimiter=",", header=header, fmt='%.8f')
         elif funkcja == "BL_PL2000":
             f = np.deg2rad(data[:,0])
             l = np.deg2rad(data[:,1])
             result00 = self.PL2000(f, l)
-            header = "Transformacja BLH -> PL2000"
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result00, delimiter=",", header=header, fmt='%.5f')
+            header = "Transformacja BL -> PL2000"
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), result00, delimiter=",", header=header, fmt='%.8f')
         elif funkcja == "XYZ_NEU":
             f = data[0,0]
             l = data[0,1]
@@ -364,9 +365,9 @@ class Transformacje:
             Z = data[0,8]
             neu = self.xyz2neu(f, l, X, Y, Z, X0, Y0, Z0)
             header = "Transformacja XYZ -> NEU"
-            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), neu, delimiter=",", header=header, fmt='%.5f')
-    
-     
+            np.savetxt(os.path.join(os.getcwd(), f"WYNIK_{funkcja.upper()}.txt"), neu, delimiter=",", header=header, fmt='%.8f')
+
+ 
            
 if __name__ == "__main__":
     
