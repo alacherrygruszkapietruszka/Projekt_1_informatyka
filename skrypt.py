@@ -381,7 +381,7 @@ if __name__ == "__main__":
         print(f"Niestety nie ma takiego pliku. Spróbuj podać pełną scieżkę do pliku lub upewnij się że wpisujesz dobrą nazwę")
            
     elip = {'WGS84':[6378137.000, 0.00669438002290], 'GRS80':[6378137.000, 0.00669438002290], 'mars':[3396900.000, 0.008725863396028901]}
-    funkcja = {'XYZ_BLH':'xyz2flh', 'BLH_XYZ': 'flh2xyz', 'XYZ_NEU': 'xyz2neu', 'BL_PL2000': 'PL2000', 'BL_PL1992': 'PL1992'}
+    funkcja = {'XYZ_BLH':'xyz2flh', 'BLH_XYZ': 'flh2xyz', 'XYZ_NEU': 'xyz2neu', 'BLPL2000': 'PL2000', 'BLPL1992': 'PL1992'}
     
     try:
         geo = Transformacje(elip[args.elip.upper()])
