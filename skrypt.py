@@ -176,4 +176,4 @@ if __name__ == "__main__":
     except AttributeError:
         raise print("Podana funkcja/elipsoida nie istnieje, proszę wprowadzić dostępne wartosci.")
     
-    print('Program zakończyl działanie. Wyniki znajdują się w pliku WYNIK_<funkcja>.txt')
+    print('Zapisano. Wyniki znajdują się w pliku WYNIK_<funkcja>.txt')
