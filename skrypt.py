@@ -295,7 +295,7 @@ if __name__ == "__main__":
     transformacje = ['XYZ_BLH', 'BLH_XYZ', 'BL_PL2000', 'BL_PL1992', 'XYZ_NEU']
     
     if trans_wsp not in funkcja:
-        raise Exception('Skrypt nie obsluguje podanej transformacji')
+        raise Exception('Skrypt nie obsluguje podanej transformacji. Podaj jedną z możliwych: XYZ_BLH:xyz2flh,BLH_XYZ:flh2xyz,XYZ_NEU:xyz2neu,BL_PL2000: PL2000,BL_PL1992: PL1992')
         
     try:
         with open(plik, 'r') as f, open(f"WYNIK_{trans_wsp.upper()}.txt", 'w') as wynik:
