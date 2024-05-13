@@ -53,7 +53,7 @@ Każda linia pliku (oprócz pierwszych czterech) powinna zawierać współrzędn
 
 - Przykład plkiu wejściowego:
 
- Współrzedne geocentryczny ECEF stacji pemanentnej GNSS\
+'' Współrzedne geocentryczny ECEF stacji pemanentnej GNSS\
 Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu\
   X[m]         Y[m]        Z[m]
  ----------------------------------------------
@@ -68,7 +68,7 @@ Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu\
 3664940.515,1409153.590,5009571.170\
 3664940.514,1409153.584,5009571.169\
 3664940.515,1409153.595,5009571.169\
-3664940.513,1409153.584,5009571.171
+3664940.513,1409153.584,5009571.171''
 
 
 # Format danych wyjściowych:
