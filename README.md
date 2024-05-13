@@ -49,7 +49,27 @@ python skrypt.py -plik dane.txt -elip WGS84 -funkcja BL_PL1992
 Dane wejściowe powinny być przechowywane w pliku tekstowym zapisanym w tym samym folderze w którym przechowywany jest program skrypt.py.\
 Współrzędne XYZ lub BLH powinny być oddzielone przecinkami.\
 UWAGA! Program rozpoczyna wczytywanie danych  po pierwszych czterech linijkach nagłówka.\
-Każda linia pliku (oprócz pierwszych czterech) powinna zawierać współrzędne dla jednego punktu w odpowiednim formacie.
+Każda linia pliku (oprócz pierwszych czterech) powinna zawierać współrzędne dla jednego punktu w odpowiednim formacie.\
+
+- Przykład plkiu wejściowego:
+
+ Współrzedne geocentryczny ECEF stacji pemanentnej GNSS
+Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu
+  X[m]         Y[m]        Z[m]
+# ----------------------------------------------------
+3664940.500,1409153.590,5009571.170
+3664940.510,1409153.580,5009571.167
+3664940.520,1409153.570,5009571.167
+3664940.530,1409153.560,5009571.168
+3664940.520,1409153.590,5009571.170
+3664940.514,1409153.584,5009571.166
+3664940.525,1409153.575,5009571.166
+3664940.533,1409153.564,5009571.169
+3664940.515,1409153.590,5009571.170
+3664940.514,1409153.584,5009571.169
+3664940.515,1409153.595,5009571.169
+3664940.513,1409153.584,5009571.171
+
 
 # Format danych wyjściowych:
 Wyniki przekształcenia zostaną zapisane w pliku tekstowym o nazwie "WYNIK_NAZWA_FUNKCJI.txt", gdzie "NAZWA_FUNKCJI" to nazwa funkcji transformacji (np. "WYNIK_XYZ_BLH.txt").\
@@ -63,5 +83,5 @@ Współrzędne będą oddzielone spacjami, a każda linia będzie zawierać wsp�
 - Program zwraca błąd kiedy plik wejściowy nie może być znaleziony i prosi o podanie innego pliku, wprowadzenie jego lokalizacji lub sprawdzenie nazwy pliku,\
 - Program rozpoczyna wczytywanie danych  po pierwszych czterech linijkach nagłówka.
 - Program zwraca błąd w przypadku podania pliku o niewłaściwym formacie (musi byc txt)
-
+gi
 
