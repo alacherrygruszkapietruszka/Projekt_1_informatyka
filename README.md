@@ -2,7 +2,7 @@
 Program skrypt.py pozwala na przekształcanie współrzędnych geodezyjnych między różnymi układami odniesienia oraz formatami, wykorzystując dostępne elipsoidy geodezyjne. 
 
 # Wymagania:
-Program dedykowany dla systemu operacyjnego windows. By program mógł działać konieczym jest posiadanie programu python 3.9 wraz z następującymi bibliotekami:\\
+Program dedykowany dla systemu operacyjnego windows. By program mógł działać konieczym jest posiadanie programu python 3.9 wraz z następującymi bibliotekami:\
 numpy (zainstalowane jako np): używane do operacji na macierzach i wektorach.\\
 math: zawiera podstawowe funkcje matematyczne.\\
 sys: zawiera metody i zmienne służące do modyfikowania wielu elementów środowiska wykonawczego języka Python\\
