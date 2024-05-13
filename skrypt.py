@@ -284,7 +284,7 @@ if __name__ == "__main__":
         trans_wsp = argumenty[argumenty.index('-funkcja') + 1]
         plik = argumenty[argumenty.index('-plik') + 1]
     except IndexError:
-        raise Exception('Nie podano wartoci dla wszytkich wymaganych flag')
+        raise Exception('Nie podano wartosci dla wszytkich wymaganych parametrów')
         
     try:
         elipsoida = elipsoidy[elip]
