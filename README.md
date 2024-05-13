@@ -55,8 +55,8 @@ Przykład plkiu wejściowego:
 
 Współrzedne geocentryczny ECEF stacji pemanentnej GNSS\
 Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu\
-  X[m]         Y[m]        Z[m]
-#----------------------------------------------
+  X[m]         Y[m]        Z[m]\
+#----------------------------------------------\
 3664940.500,1409153.590,5009571.170\
 3664940.510,1409153.580,5009571.167\
 3664940.520,1409153.570,5009571.167\
