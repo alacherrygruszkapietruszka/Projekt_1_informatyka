@@ -46,10 +46,22 @@ python skrypt.py -plik dane.txt -elip WGS84 -funkcja BL_PL1992
 -funkcja: wybór rodzaju transformacji (dozwolone wartości: "XYZ_BLH", "BLH_XYZ", "XYZ_NEU", "BL_PL2000", "BL_PL1992").
 
 # Format danych wejściowych:
-Dane wejściowe powinny być przechowywane w pliku tekstowym.\
+Dane wejściowe powinny być przechowywane w pliku tekstowym zapisanym w tym samym folderze w którym przechowywany jest program skrypt.py.\
 Współrzędne XYZ lub BLH powinny być oddzielone przecinkami.\
-Każda linia pliku powinna zawierać współrzędne dla jednego punktu w odpowiednim formacie.
+UWAGA! Program rozpoczyna wczytywanie danych  po pierwszych czterech linijkach nagłówka.\
+Każda linia pliku (oprócz pierwszych czterech) powinna zawierać współrzędne dla jednego punktu w odpowiednim formacie.
 
 # Format danych wyjściowych:
 Wyniki przekształcenia zostaną zapisane w pliku tekstowym o nazwie "WYNIK_NAZWA_FUNKCJI.txt", gdzie "NAZWA_FUNKCJI" to nazwa funkcji transformacji (np. "WYNIK_XYZ_BLH.txt").\
 Współrzędne będą oddzielone spacjami, a każda linia będzie zawierać współrzędne dla jednego punktu.
+
+# Błędy:
+- Program zwraca błąd przy podaniu niewłaściwej liczby argumentów i prosi o podanie wszystkich,\
+- Program zwraca błąd przy podaniu parametrów bez wartości,\
+- Program zwraca błąd w przypadku podania nieprawidłowego modelu elipsoidy,\
+- Program zwraca błąd w przypadku podania nieobsługiwanej transformacji i prosi o podanie jednej z możliwych opcji,\
+- Program zwraca błąd kiedy plik wejściowy nie może być znaleziony i prosi o podanie innego pliku, wprowadzenie jego lokalizacji lub sprawdzenie nazwy pliku,\
+- Program rozpoczyna wczytywanie danych  po pierwszych czterech linijkach nagłówka.
+- Program zwraca błąd w przypadku podania pliku o niewłaściwym formacie (musi byc txt)
+
+
