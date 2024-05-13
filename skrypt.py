@@ -324,7 +324,7 @@ if __name__ == "__main__":
                     elif trans_wsp == 'BL_PL1992':
                         wynik.write(geo.PL1992(fi, lam))
     except FileNotFoundError:
-        raise Exception('Podany plik nie istnieje. Podaj inny plik lub sprawdz nazwę podanego pliku.')
+        raise Exception('Podany plik nie istnieje. Podaj inny plik, sprawdz jego lokalizacje lub sprawdz nazwę podanego pliku.')
     except (KeyError, IndexError, ValueError):
         raise Exception('Nieodpowiedni format pliku.')
     except AttributeError:
