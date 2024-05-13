@@ -1,19 +1,19 @@
 # Instrukcja obsługi programu skrypt.py
 Program skrypt.py pozwala na przekształcanie współrzędnych geodezyjnych między różnymi układami odniesienia oraz formatami, wykorzystując dostępne elipsoidy geodezyjne. 
 
-#Wymagania:
+# Wymagania:
 Program dedykowany dla systemu operacyjnego windows. By program mógł działać konieczym jest posiadanie programu python 3.9 wraz z następującymi bibliotekami:
 numpy (zainstalowane jako np): używane do operacji na macierzach i wektorach.
 math: zawiera podstawowe funkcje matematyczne.
 sys: zawiera metody i zmienne służące do modyfikowania wielu elementów środowiska wykonawczego języka Python
 
-#Elipsoidy geodezyjne:
+# Elipsoidy geodezyjne:
 Program obsługuje następujące elipsoidy geodezyjne:
 WGS84: Elipsoida zdefiniowana w ramach systemu WGS84.
 GRS80: Elipsoida zdefiniowana w ramach systemu GRS80.
 mars: Elipsoida geodezyjna Marsa.
 
-#Dostępne transformacje:
+Dostępne transformacje:
 XYZ_BLH: Przekształcenie współrzędnych XYZ na współrzędne geodezyjne BLH.
 BLH_XYZ: Przekształcenie współrzędnych BLH na współrzędne XYZ.
 XYZ_NEU: Przekształcenie współrzędnych XYZ na współrzędne NEU.
