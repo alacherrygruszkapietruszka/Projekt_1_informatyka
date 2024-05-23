@@ -202,21 +202,22 @@ class Transformacje:
 
         l0 = 0 
         strefa = 0
-        if l >= radians(13.5) and l <= radians(16.5):
+        if l >= 13.5 and l <= 16.5:
             strefa = 5
-            l0 = radians(15)
-        elif l > radians(16.5) and l <= radians(19.5):
+            l0 = np.radians(15)
+        elif l > 16.5 and l <= 19.5:
             strefa = 6
-            l0 = radians(18)
-        elif l > radians(19.5) and l <= radians(22.5):
+            l0 = np.radians(18)
+        elif l > 19.5 and l <= 22.5:
             strefa =7
-            l0 = radians(21)
-        elif l > radians(22.5) and l <= radians(25.5):
+            l0 = np.radians(21)
+        elif l > 22.5 and l <= 25.5:
             strefa = 8
-            l0 = radians(24)
+            l0 = np.radians(24)
         b2 = (self.a**2) * (1-self.e2)
-        e2p = ( self.a**2 - b2 ) / b2
-        l = radians(l)
+        e2p = (self.a**2 - b2 ) / b2
+        l = np.radians(l)
+        f = np.radians(f)
         dl = l - l0
         t = np.tan(f)
         ni = e2p * (np.cos(f))**2
@@ -226,7 +227,7 @@ class Transformacje:
         YGK20 = (dl*N* np.cos(f)) * (1+((((dl)**2)/6)*(np.cos(f))**2) *(1-(t**2)+ni)+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*ni-58*ni*(t**2)) )
         X2000 = XGK20 * m 
         Y2000 = YGK20 * m + strefa*1000000 + 500000
-        return f'{X2000} {Y2000} \n'
+        return (f'{X2000} {Y2000} \n')
 
     def PL1992(self, f, l, m = 0.9993):
         """
@@ -247,20 +248,23 @@ class Transformacje:
            f'string zawierający współrzędne x i y w układzie PL-1992
 
        """
-        l = radians(l)
-        lam0 = radians(19)
-        b2 = (self.a**2) * (1-self.e2)
-        e2p = ( self.a**2 - b2 ) / b2
-        dl = l - lam0
+        l0 = np.deg2rad(19)
+        l = np.radians(l)
+        f = np.radians(f)
+        b2 = self.a**2 * (1-self.e2)
+        e_prim2 = (self.a**2 - b2)/b2
+        delta_l = l - l0
         t = np.tan(f)
-        ni = np.sqrt(e2p * (np.cos(f))**2)
+        eta2 = e_prim2 * ((np.cos(f))**2) 
         N = self.Npu(f)
-        sigma = self.sigma(f)
-        XGK92 = sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1 + ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*ni + 4*(ni**2))  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*ni - 330*ni*(t**2)))
-        YGK92 = (dl*N* np.cos(f)) * (1+((((dl)**2)/6)*(np.cos(f))**2) *(1-(t**2)+ni)+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*ni-58*ni*(t**2)) )
-        X92 = XGK92*m - 5300000
-        Y92 = YGK92*m + 500000
+        si = self.sigma_1(f)
+        xgk = si + ((delta_l)**2)/2 * N * np.sin(f) * np.cos(f) * (1 + ((delta_l)**2)/12 * (np.cos(f))**2 * (5 - t**2 + 9 * eta2 + 4 * (eta2)**2) + ((delta_l)**4)/360 * (np.cos(f))**4 * (61 - 58*t**2 + t**4 + 270*eta2 - 330*eta2*t**2))
+        ygk = delta_l * N * np.cos(f) * (1 + ((delta_l)**2)/6 * (np.cos(f))**2 * (1 - t**2 + eta2) + ((delta_l)**4)/120 * (np.cos(f))**4 * (5 - 18 * t**2 + t**4 + 14 * eta2 - 58 * eta2 * t**2))
+        X92 = xgk*m - 5300000
+        Y92 = ygk*m + 500000
         return f'{X92} {Y92} \n'
+    
+        
 
 if __name__ == "__main__":
 
