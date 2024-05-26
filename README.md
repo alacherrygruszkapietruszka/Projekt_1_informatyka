@@ -104,12 +104,12 @@ Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu\
 # Format danych wyjściowych:
 Wyniki przekształcenia zostaną zapisane w pliku tekstowym o nazwie "WYNIK_NAZWA_FUNKCJI.txt", gdzie "NAZWA_FUNKCJI" to nazwa funkcji transformacji (np. "WYNIK_XYZ_BLH.txt").\
 Współrzędne będą oddzielone spacjami, a każda linia będzie zawierać współrzędne dla jednego punktu.
-Jednostka danych wyjściowych jest zależna od wybranej funkcji:\
-- XYZ_BLH - phi[stopnie dziesiętne], lambda[stopnie dziesiętne], H[m]\
-- BLH_XYZ - X[m], Y[m], Z[m]\
-- XYZ_NEU - n[m], e[m], u[m]\
-- BL_2000 - X2000[m], Y2000[m]\
-- BL_1992 - X1992[m], Y1992[m]\
+Jednostka danych wyjściowych jest zależna od wybranej funkcji:
+- XYZ_BLH - phi[stopnie dziesiętne], lambda[stopnie dziesiętne], H[m]
+- BLH_XYZ - X[m], Y[m], Z[m]
+- XYZ_NEU - n[m], e[m], u[m]
+- BL_2000 - X2000[m], Y2000[m]
+- BL_1992 - X1992[m], Y1992[m]
 
 
 # Błędy:
