@@ -48,12 +48,12 @@ python skrypt.py -plik dane.txt -elip WGS84 -funkcja BL_PL1992
 # Format danych wejściowych:
 Dane wejściowe powinny być przechowywane w pliku tekstowym zapisanym w tym samym folderze w którym przechowywany jest program skrypt.py.\
 Współrzędne XYZ lub BLH powinny być oddzielone przecinkami.\
-Jednostka danych wyjścioweych jest zależna od wybranej funkcji:\
-- XYZ_BLH - X[m], Y[m], Z[m]\
-- BLH_XYZ - phi[stopnie dziesiętne], lambda[stopnie dziesiętne], H[m]\
-- XYZ_NEU - Xa[m], Ya[m], Za[m], Xb[m], Yb[m], Zb[m]\
-- BL_2000 - phi[stopnie dziesiętne], lambda[stopnie dziesiętne], m(stała - skala odwzorowania na południkach osiowych dla układu PL-2000)\
-- BL_1992 - phi[stopnie dziesiętne], lambda[stopnie dziesiętne], m(stała - skala odwzorowania na południkach osiowych dla układu PL-1992)\
+Jednostka danych wyjścioweych jest zależna od wybranej funkcji:
+- XYZ_BLH - X[m], Y[m], Z[m]
+- BLH_XYZ - phi[stopnie dziesiętne], lambda[stopnie dziesiętne], H[m]
+- XYZ_NEU - Xa[m], Ya[m], Za[m], Xb[m], Yb[m], Zb[m]
+- BL_2000 - phi[stopnie dziesiętne], lambda[stopnie dziesiętne], m(stała - skala odwzorowania na południkach osiowych dla układu PL-2000)
+- BL_1992 - phi[stopnie dziesiętne], lambda[stopnie dziesiętne], m(stała - skala odwzorowania na południkach osiowych dla układu PL-1992)
 UWAGA! Korzystając z transformacji XYZ_NEU współrzędne środka oznaczone ...\
 UWAGA! Program rozpoczyna wczytywanie danych  po pierwszych czterech linijkach nagłówka.\
 Każda linia pliku (oprócz pierwszych czterech) powinna zawierać współrzędne dla jednego punktu w odpowiednim formacie.
