@@ -80,18 +80,18 @@ Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu\
 
 Współrzedne geodezyjne pomnika geodezji europejskiej\
 ...\
-  phi[m]         lambda[m]        H[m]\
+  phi[stopnie dziesiętne]         lambda[stopnie dziesiętne]        H[m]\
 #----------------------------------------------\
 52.243973,21.009177,109.91
 
 Współrzedne geodezyjne ECEF stacji pemanentnej GNSS\
 Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu\
-  phi[m]         lambda[m]         m\
+  phi[stopnie dziesiętne]         lambda[stopnie dziesiętne]         m\
 #----------------------------------------------\
 
 Współrzedne geodezyjne ECEF stacji pemanentnej GNSS\
 Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu\
-  phi[m]         lambda[m]         m\
+  phi[stopnie dziesiętne]         lambda[stopnie dziesiętne]         m\
 #----------------------------------------------\
 
 Współrzedne geocentryczne ECEF stacji pemanentnej GNSS\
