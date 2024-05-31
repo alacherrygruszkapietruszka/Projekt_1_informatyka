@@ -82,20 +82,21 @@ Współrzedne geodezyjne pomnika geodezji europejskiej\
 ...\
   phi[stopnie dziesiętne]         lambda[stopnie dziesiętne]        H[m]\
 #----------------------------------------------\
-52.243973,21.009177,109.91
+52.243973,21.009177,109.91\
 
 Współrzedne geodezyjne punktu\
 ...\
   phi[stopnie dziesiętne]         lambda[stopnie dziesiętne]\
 # -----------------------------------------------------
-36.500,14.590
-36.510,13.580
+36.500,14.590\
+36.510,13.580\
 
 
 Współrzędne środka układu lokalnego, współrzeędne punktu przenoszonego do układu lokalnego\
 ...\
   Xa[m]         Ya[m]         Za[m]        Xb[m]         Yb[m]         Zb[m]\
 #----------------------------------------------\
+3664940.500,1409153.590,5009571.170,3664940.530,1409153.560,5009571.168\
 
 
 
