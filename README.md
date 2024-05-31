@@ -87,7 +87,7 @@ Współrzedne geodezyjne pomnika geodezji europejskiej\
 Współrzedne geodezyjne punktu\
 ...\
   phi[stopnie dziesiętne]         lambda[stopnie dziesiętne]\
-# -----------------------------------------------------
+#-----------------------------------------------------
 36.500,14.590\
 36.510,13.580\
 
