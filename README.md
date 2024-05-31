@@ -61,7 +61,7 @@ Każda linia pliku (oprócz pierwszych czterech) powinna zawierać współrzędn
 
 Przykłady plkiów wejściowych:
 
-Współrzedne geocentryczny ECEF stacji pemanentnej GNSS\
+-Współrzedne geocentryczny ECEF stacji pemanentnej GNSS\
 Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu\
   X[m]         Y[m]        Z[m]\
 #----------------------------------------------\
@@ -78,13 +78,13 @@ Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu\
 3664940.515,1409153.595,5009571.169\
 3664940.513,1409153.584,5009571.171\
 
-Współrzedne geodezyjne pomnika geodezji europejskiej\
+-Współrzedne geodezyjne pomnika geodezji europejskiej\
 ...\
   phi[stopnie dziesiętne]         lambda[stopnie dziesiętne]        H[m]\
 #----------------------------------------------\
 52.243973,21.009177,109.91\
 
-Współrzedne geodezyjne punktu\
+-Współrzedne geodezyjne punktu\
 ...\
   phi[stopnie dziesiętne]         lambda[stopnie dziesiętne]\
 #-----------------------------------------------------
@@ -92,7 +92,7 @@ Współrzedne geodezyjne punktu\
 36.510,13.580\
 
 
-Współrzędne środka układu lokalnego, współrzeędne punktu przenoszonego do układu lokalnego\
+-Współrzędne środka układu lokalnego, współrzeędne punktu przenoszonego do układu lokalnego\
 ...\
   Xa[m]         Ya[m]         Za[m]        Xb[m]         Yb[m]         Zb[m]\
 #----------------------------------------------\
