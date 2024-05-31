@@ -108,7 +108,7 @@ Jednostka danych wyjściowych jest zależna od wybranej funkcji:
 - BLH_XYZ - X[m], Y[m], Z[m]
 - XYZ_NEU - n[m], e[m], u[m]
 - BL_2000 - X2000[m], Y2000[m]
-- BL_1992 - X1992[m], Y1992[m]
+- BL_1992 - X1992[m], Y1992[m]\
 W zależności od wybranej funkcji struktura pliku wyjściowego będzie wyglądała inaczej i zwracała wyniki w innej kolejności;
 - XYZ_BLH - phi, lambda, H
 - BLH_XYZ - X, Y, Z
